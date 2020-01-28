@@ -4,7 +4,7 @@ author: nolte
 inputs:
   path:
     description: Relative path under $GITHUB_WORKSPACE to run the linter against
-    default: ... 
+    default: '/github'
     required: false
 runs:
   using: docker
@@ -14,7 +14,7 @@ runs:
   - "lint"
   - "--all"
   - "--chart-dirs"
-  - "/github"
+  - "${{ inputs.path }}"
 branding:
   icon: alert-circle
   color: blue
