@@ -10,7 +10,8 @@ inputs:
 runs:
   using: docker
   image: Dockerfile
-
+  args:
+  - ${{ inputs.path }}
 branding:
   icon: alert-circle
   color: blue
