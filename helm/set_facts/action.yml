@@ -1,0 +1,15 @@
+# https://mikefarah.github.io/yq/
+name: Helm define chart facts
+description: Load Chart Facts from chart.yml
+author: nolte
+inputs:
+  path:
+    description: Relative path under $GITHUB_WORKSPACE to run the linter against
+    default: ... 
+    required: false
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: alert-circle
+  color: blue

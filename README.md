@@ -16,3 +16,6 @@ helm repo add nolte https://nolte.github.io/helm-charts/
 ```
 helm repo index --url https://nolte.github.io/helm-charts/ --merge index.yaml .
 ```
+
+
+https://help.github.com/en/actions/automating-your-workflow-with-github-actions/persisting-workflow-data-using-artifacts
