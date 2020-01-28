@@ -8,7 +8,7 @@ inputs:
     required: false
 runs:
   using: docker
-  image: alpine/helm:3.0.2
+  image: docker://alpine/helm:3.0.2
   args:
   - "package"
   - "."
