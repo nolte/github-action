@@ -1,7 +1,7 @@
 #!/bin/sh
 
 
-CHART_YAML=${GITHUB_WORKSPACE:-.}/$1
+CHART_YAML=$1
 
 CHARTVERSION=$(yq r ${CHART_YAML} version)
 CHARTAPPVERSION=$(yq r ${CHART_YAML} appVersion)

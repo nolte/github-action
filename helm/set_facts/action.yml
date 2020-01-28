@@ -5,7 +5,7 @@ author: nolte
 inputs:
   path:
     description: Relative path under $GITHUB_WORKSPACE to run the linter against
-    default: ... 
+    default: Chart.yaml
     required: false
 runs:
   using: docker
