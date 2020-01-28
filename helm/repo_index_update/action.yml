@@ -1,0 +1,23 @@
+name: Helm Repo index update
+description: Update a Helm Chart Repo index.yaml
+author: nolte
+inputs:
+  path:
+    description: Relative path under $GITHUB_WORKSPACE to run the linter against
+    default: "." 
+    required: false
+  url:
+    description: Public repository URL for generated index.yaml
+    required: true    
+runs:
+  using: docker
+  image: docker://docker.io/alpine/helm:3.0.2
+  args:
+  - "repo"
+  - "index"
+  - "--url"
+  - "${{ inputs.url }}"
+  - "${{ inputs.path }}"
+branding:
+  icon: alert-circle
+  color: blue
