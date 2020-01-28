@@ -8,9 +8,10 @@ inputs:
     required: false
 runs:
   using: docker
-  image: Dockerfile
+  image: alpine/helm:3.0.2
   args:
-  - ${{ inputs.path }}
+  - "package"
+  - "."
 branding:
   icon: alert-circle
   color: blue
