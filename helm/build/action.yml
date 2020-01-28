@@ -12,6 +12,8 @@ runs:
   args:
   - "package"
   - "."
+  - "--destination"
+  - "dist"
 branding:
   icon: alert-circle
   color: blue
