@@ -1,3 +1,4 @@
+---
 name: Helm Testing chart
 description: Testing a archive from given Chart
 author: nolte
@@ -11,10 +12,10 @@ runs:
   image: docker://quay.io/helmpack/chart-testing
   entrypoint: ct
   args:
-  - "lint"
-  - "--all"
-  - "--chart-dirs"
-  - "${{ inputs.path }}"
+    - "lint"
+    - "--all"
+    - "--chart-dirs"
+    - "${{ inputs.path }}"
 branding:
   icon: alert-circle
   color: blue

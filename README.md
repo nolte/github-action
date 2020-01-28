@@ -1,21 +1,25 @@
-# 
+# Collection of Reuseable Github Actions
 
-* [medium.com tutorial](https://medium.com/@mattiaperi/create-a-public-helm-chart-repository-with-github-pages-49b180dbb417)
+This Repository represent a set of different [GitHub Actions](https://help.github.com/en/actions). 
 
 ## Usage
 
-```bash
+Create a [Github Workflow](https://guides.github.com/introduction/flow/) File, for handle the different build steps.
 
-helm repo add nolte https://nolte.github.io/helm-charts/
-
+```yaml
+jobs:
+  helmbuild:
+    ...
+    steps:
+      ...
+      - name: Run package
+        uses: nolte/github-action/helm/build@master
+      ...
+    ...
+  ...
 ```
 
-## Add new Charts
 
+# Links
 
-```
-helm repo index --url https://nolte.github.io/helm-charts/ --merge index.yaml .
-```
-
-
-https://help.github.com/en/actions/automating-your-workflow-with-github-actions/persisting-workflow-data-using-artifacts
+* [persisting-workflow-data-using-artifacts](https://help.github.com/en/actions/automating-your-workflow-with-github-actions/persisting-workflow-data-using-artifacts)

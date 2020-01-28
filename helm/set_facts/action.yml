@@ -1,3 +1,4 @@
+---
 # https://mikefarah.github.io/yq/
 name: Helm define chart facts
 description: Load Chart Facts from chart.yml
@@ -11,7 +12,7 @@ runs:
   using: docker
   image: Dockerfile
   args:
-  - ${{ inputs.path }}
+    - ${{ inputs.path }}
 branding:
   icon: alert-circle
   color: blue

@@ -1,19 +1,20 @@
+---
 name: Helm package chart
 description: Package a archive from given Chart
 author: nolte
 inputs:
   path:
     description: Relative path under $GITHUB_WORKSPACE to run the linter against
-    default: ... 
+    default: ...
     required: false
 runs:
   using: docker
   image: docker://docker.io/alpine/helm:3.0.2
   args:
-  - "package"
-  - "."
-  - "--destination"
-  - "dist"
+    - "package"
+    - "."
+    - "--destination"
+    - "dist"
 branding:
   icon: alert-circle
   color: blue
