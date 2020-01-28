@@ -14,7 +14,7 @@ runs:
   - "lint"
   - "--all"
   - "--chart-dirs"
-  - "/github/workspace"
+  - "/github/"
 branding:
   icon: alert-circle
   color: blue
