@@ -9,8 +9,7 @@ inputs:
 runs:
   using: docker
   image: docker://quay.io/helmpack/chart-testing
-  commands: 
-  - ct
+  command: ct
   args:
   - "lint"
   - "--all"
