@@ -1,6 +1,6 @@
 #!/bin/sh
 
-CHART_YAML=/github/workspace/Chart.yaml
+CHART_YAML=${ GITHUB_WORKSPACE }/Chart.yaml
 
 CHARTVERSION=$(yq r ${CHART_YAML} version)
 CHARTAPPVERSION=$(yq r ${CHART_YAML} appVersion)
