@@ -13,6 +13,8 @@ runs:
   args:
   - "lint"
   - "--all"
+  - "--chart-dirs"
+  - "/github/workspace"
 branding:
   icon: alert-circle
   color: blue
