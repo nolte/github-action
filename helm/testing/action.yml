@@ -1,0 +1,16 @@
+name: Helm Testing chart
+description: Testing a archive from given Chart
+author: nolte
+inputs:
+  path:
+    description: Relative path under $GITHUB_WORKSPACE to run the linter against
+    default: ... 
+    required: false
+runs:
+  using: docker
+  image: docker://quay.io/helmpack/chart-testing
+  args:
+  - "--all"
+branding:
+  icon: alert-circle
+  color: blue
