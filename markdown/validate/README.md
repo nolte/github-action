@@ -3,12 +3,12 @@
 GithubAction for [remarkjs/remark-validate-links](https://github.com/remarkjs/remark-validate-links)
 
 ```bash
-  docker build -t nolte/nolte/remark-validate-links .
+  docker build -t remark-validate-links .
 ```
 
 **Local Run**
 ```bash
-docker run --rm -v $(pwd):/src:ro nolte/remark-validate-links
+docker run --rm -v $(pwd):/src:ro remark-validate-links
 
 
 docs/IAM_GROUP.md: no issues found
