@@ -1,0 +1,10 @@
+---
+name: Markdown Links
+description: Validate markdown links with remarkjs/remark-validate-links
+author: nolte
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: alert-circle
+  color: blue
