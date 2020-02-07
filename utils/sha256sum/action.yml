@@ -8,13 +8,8 @@ inputs:
     default: "dist"
     required: false
 runs:
-  using: docker
-  image: docker://docker.io/alpine/helm:3.0.2
-  args:
-    - "package"
-    - "."
-    - "--destination"
-    - "${{ inputs.path }}"
+  using: 'node12'
+  main: 'main.js'
 branding:
   icon: alert-circle
   color: blue
