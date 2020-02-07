@@ -1377,6 +1377,7 @@ const exec = __webpack_require__(986);
 const github = __webpack_require__(469);
 
 async function main() {
+    console.log("Start Version Update with bump2version")
     await core.group('install bump2version', async () => {
         await exec.exec('pip', ['install', 'bump2version']);
         await exec.exec('pip', ['freeze', '--local']);
@@ -1387,6 +1388,7 @@ async function main() {
         '--current-version', currentVersion, part, '--no-tag', '--no-commit'
     ];
     const ret = await exec.exec('bump2version', ARGS);
+    console.log(ret)
 }
 main().catch((e) => core.setFailed(e.message));
 
