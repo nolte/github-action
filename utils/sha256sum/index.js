@@ -6,9 +6,9 @@ const write = require('write');
 var sha256File = require('sha256-file');
 
 async function run() {
-    const path = core.getInput('path', { required: true });
+    const subPath = core.getInput('path', { required: true });
     const shaOutFile = core.getInput('shaOutFile', { required: true });
-    const filesBaseDirectory = path.join(process.env['GITHUB_WORKSPACE'], path);
+    const filesBaseDirectory = path.join(process.env['GITHUB_WORKSPACE'], subPath);
     const patterns = [path.join(filesBaseDirectory, '/**.tgz')]
     console.log("Calculate SHA256Hash from files %s", filesBaseDirectory);
     const globber = await glob.create(patterns.join('\n'))

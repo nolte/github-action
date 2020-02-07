@@ -12,8 +12,8 @@ inputs:
     default: "sha256sum.txt"
     required: false
 outputs:
-  shaFilePath: # id of output
-    description: 'The time we greeted you'
+  shaFilePath:
+    description: 'Generated SHA Checksum File Path'
 runs:
   using: 'node12'
   main: 'dist/index.js'
