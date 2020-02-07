@@ -34,7 +34,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(156);
+/******/ 		return __webpack_require__(973);
 /******/ 	};
 /******/
 /******/ 	// run startup
@@ -2551,28 +2551,6 @@ function Octokit(plugins, options) {
   plugins.forEach(pluginFunction => pluginFunction(api, options));
 
   return api;
-}
-
-
-/***/ }),
-
-/***/ 156:
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
-
-const core = __webpack_require__(576);
-const github = __webpack_require__(315);
-
-try {
-    // `who-to-greet` input defined in action metadata file
-    const nameToGreet = core.getInput('who-to-greet');
-    console.log(`Hello ${nameToGreet}!`);
-    const time = (new Date()).toTimeString();
-    core.setOutput("time", time);
-    // Get the JSON webhook payload for the event that triggered the workflow
-    const payload = JSON.stringify(github.context.payload, undefined, 2)
-    console.log(`The event payload: ${payload}`);
-} catch (error) {
-    core.setFailed(error.message);
 }
 
 
@@ -19648,6 +19626,13 @@ module.exports = require("stream");
 
 /***/ }),
 
+/***/ 417:
+/***/ (function(module) {
+
+module.exports = require("crypto");
+
+/***/ }),
+
 /***/ 426:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -24943,6 +24928,41 @@ module.exports = factory();
 
 /***/ }),
 
+/***/ 921:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+var crypto = __webpack_require__(417);
+var fs = __webpack_require__(747);
+
+module.exports = function (filename, callback) {
+  var sum = crypto.createHash('sha256');
+  if (callback && typeof callback === 'function') {
+    var fileStream = fs.createReadStream(filename);
+    fileStream.on('error', function (err) {
+      return callback(err, null)
+    });
+    fileStream.on('data', function (chunk) {
+      try {
+        sum.update(chunk)
+      } catch (ex) {
+        return callback(ex, null)
+      }
+    });
+    fileStream.on('end', function () {
+      return callback(null, sum.digest('hex'))
+    })
+  } else {
+    sum.update(fs.readFileSync(filename));
+    return sum.digest('hex')
+  }
+};
+
+
+/***/ }),
+
 /***/ 930:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -25090,6 +25110,27 @@ function parseOptions(options, log, hook) {
   clientDefaults.request.hook = hook.bind(null, "request");
 
   return clientDefaults;
+}
+
+
+/***/ }),
+
+/***/ 973:
+/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
+
+const core = __webpack_require__(576);
+const github = __webpack_require__(315);
+const { readdirSync } = __webpack_require__(747)
+var sha256File = __webpack_require__(921);
+
+
+
+try {
+    // `who-to-greet` input defined in action metadata file
+    currentPath = process.env['GITHUB_WORKSPACE']
+    console.log(`The event payload: ${currentPath}`);
+} catch (error) {
+    core.setFailed(error.message);
 }
 
 
