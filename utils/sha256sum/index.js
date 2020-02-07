@@ -21,8 +21,5 @@ fs.readdir(currentPath, function (err, files) {
     });
 });
 stream = fs.createWriteStream(currentPath + "/sha256sum.txt");
-stream.once('open', function (fd) {
-    stream.write("My first row\n");
-    stream.write("My second row\n");
-    stream.end();
-});
+stream.write('Lorem st laborum.\n');
+stream.end();
