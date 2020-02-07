@@ -25125,7 +25125,7 @@ const fs = __webpack_require__(747);
 var sha256File = __webpack_require__(921);
 
 currentPath = process.env['GITHUB_WORKSPACE']
-
+currentPath = currentPath + '/dist'
 //passsing directoryPath and callback function
 fs.readdir(currentPath, function (err, files) {
     //handling error
@@ -25135,7 +25135,9 @@ fs.readdir(currentPath, function (err, files) {
     //listing all files using forEach
     files.forEach(function (file) {
         // Do whatever you want to do with the file
-        console.log(file);
+        hash = sha256File(file);
+        console.log(hash);
+
     });
 });
 

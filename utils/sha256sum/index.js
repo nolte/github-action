@@ -5,7 +5,7 @@ const fs = require('fs');
 var sha256File = require('sha256-file');
 
 currentPath = process.env['GITHUB_WORKSPACE']
-
+currentPath = currentPath + '/dist'
 //passsing directoryPath and callback function
 fs.readdir(currentPath, function (err, files) {
     //handling error
@@ -15,7 +15,9 @@ fs.readdir(currentPath, function (err, files) {
     //listing all files using forEach
     files.forEach(function (file) {
         // Do whatever you want to do with the file
-        console.log(file);
+        hash = sha256File(file);
+        console.log(hash);
+
     });
 });
 
