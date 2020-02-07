@@ -985,6 +985,8 @@ function regExpEscape (s) {
 
 const core = __webpack_require__(470);
 const glob = __webpack_require__(281);
+const path = __webpack_require__(622);
+
 var sha256File = __webpack_require__(429);
 currentPath = process.env['GITHUB_WORKSPACE']
 const patterns = [currentPath + '/dist/**.tgz']
