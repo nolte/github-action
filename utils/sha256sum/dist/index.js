@@ -25138,12 +25138,10 @@ fs.readdir(currentPath, function (err, files) {
         // Do whatever you want to do with the file
         hash = sha256File(currentPath + "/" + file);
         console.log(hash);
+        core.setOutput('sha.' + file, hash);
+
     });
 });
-stream = fs.createWriteStream(currentPath + "/sha256sum.txt");
-stream.write('Lorem st laborum.\n');
-stream.end();
-
 
 /***/ }),
 
