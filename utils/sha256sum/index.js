@@ -12,19 +12,17 @@ fs.readdir(currentPath, function (err, files) {
     if (err) {
         return console.log('Unable to scan directory: ' + err);
     }
+
     //listing all files using forEach
     files.forEach(function (file) {
         // Do whatever you want to do with the file
         hash = sha256File(currentPath + "/" + file);
         console.log(hash);
-
     });
 });
-
-try {
-    // `who-to-greet` input defined in action metadata file
-
-    console.log(`The event payload: ${currentPath}`);
-} catch (error) {
-    core.setFailed(error.message);
-}
+stream = fs.createWriteStream(currentPath + "/sha256sum.txt");
+stream.once('open', function (fd) {
+    stream.write("My first row\n");
+    stream.write("My second row\n");
+    stream.end();
+});
