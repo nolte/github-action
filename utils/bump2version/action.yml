@@ -1,0 +1,5 @@
+name: pre-commit
+description: run pre-commit and optionally commit back to the pull request
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
