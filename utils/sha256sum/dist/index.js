@@ -986,8 +986,8 @@ function regExpEscape (s) {
 const core = __webpack_require__(470);
 const glob = __webpack_require__(281);
 var sha256File = __webpack_require__(429);
-
-const patterns = ['dist/tar.gz', 'dist/tar.bz', 'dist/tgz']
+currentPath = process.env['GITHUB_WORKSPACE']
+const patterns = [currentPath + '/dist/**.tgz']
 async function run() {
     console.log("start");
     const globber = await glob.create(patterns.join('\n'))
