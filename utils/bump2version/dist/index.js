@@ -1384,7 +1384,7 @@ async function main() {
     const currentVersion = core.getInput('currentVersion');
     const part = core.getInput('part');
     const ARGS = [
-        '--current-version', currentVersion, part
+        '--current-version', currentVersion, part, '--tag=false', '--no-commit'
     ];
     const ret = await exec.exec('bump2version', ARGS);
 }
