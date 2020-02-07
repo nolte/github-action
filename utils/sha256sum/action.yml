@@ -7,6 +7,13 @@ inputs:
     description: path for packaged helm chart
     default: "dist"
     required: false
+  shaOutFile:
+    description: output filename for generated sha hash file
+    default: "sha256sum.txt"
+    required: false
+outputs:
+  shaFilePath: # id of output
+    description: 'The time we greeted you'
 runs:
   using: 'node12'
   main: 'dist/index.js'
