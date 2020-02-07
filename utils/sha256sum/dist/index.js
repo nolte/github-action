@@ -34,7 +34,7 @@ module.exports =
 /******/ 	// the startup function
 /******/ 	function startup() {
 /******/ 		// Load entry module and return exports
-/******/ 		return __webpack_require__(973);
+/******/ 		return __webpack_require__(104);
 /******/ 	};
 /******/
 /******/ 	// run startup
@@ -43,124 +43,6 @@ module.exports =
 /************************************************************************/
 /******/ ({
 
-/***/ 21:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const pathHelper = __webpack_require__(195);
-const internal_match_kind_1 = __webpack_require__(977);
-const IS_WINDOWS = process.platform === 'win32';
-/**
- * Given an array of patterns, returns an array of paths to search.
- * Duplicates and paths under other included paths are filtered out.
- */
-function getSearchPaths(patterns) {
-    // Ignore negate patterns
-    patterns = patterns.filter(x => !x.negate);
-    // Create a map of all search paths
-    const searchPathMap = {};
-    for (const pattern of patterns) {
-        const key = IS_WINDOWS
-            ? pattern.searchPath.toUpperCase()
-            : pattern.searchPath;
-        searchPathMap[key] = 'candidate';
-    }
-    const result = [];
-    for (const pattern of patterns) {
-        // Check if already included
-        const key = IS_WINDOWS
-            ? pattern.searchPath.toUpperCase()
-            : pattern.searchPath;
-        if (searchPathMap[key] === 'included') {
-            continue;
-        }
-        // Check for an ancestor search path
-        let foundAncestor = false;
-        let tempKey = key;
-        let parent = pathHelper.dirname(tempKey);
-        while (parent !== tempKey) {
-            if (searchPathMap[parent]) {
-                foundAncestor = true;
-                break;
-            }
-            tempKey = parent;
-            parent = pathHelper.dirname(tempKey);
-        }
-        // Include the search pattern in the result
-        if (!foundAncestor) {
-            result.push(pattern.searchPath);
-            searchPathMap[key] = 'included';
-        }
-    }
-    return result;
-}
-exports.getSearchPaths = getSearchPaths;
-/**
- * Matches the patterns against the path
- */
-function match(patterns, itemPath) {
-    let result = internal_match_kind_1.MatchKind.None;
-    for (const pattern of patterns) {
-        if (pattern.negate) {
-            result &= ~pattern.match(itemPath);
-        }
-        else {
-            result |= pattern.match(itemPath);
-        }
-    }
-    return result;
-}
-exports.match = match;
-/**
- * Checks whether to descend further into the directory
- */
-function partialMatch(patterns, itemPath) {
-    return patterns.some(x => !x.negate && x.partialMatch(itemPath));
-}
-exports.partialMatch = partialMatch;
-//# sourceMappingURL=internal-pattern-helper.js.map
-
-/***/ }),
-
-/***/ 23:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const core = __webpack_require__(576);
-/**
- * Returns a copy with defaults filled in.
- */
-function getOptions(copy) {
-    const result = {
-        followSymbolicLinks: true,
-        implicitDescendants: true,
-        omitBrokenSymbolicLinks: true
-    };
-    if (copy) {
-        if (typeof copy.followSymbolicLinks === 'boolean') {
-            result.followSymbolicLinks = copy.followSymbolicLinks;
-            core.debug(`followSymbolicLinks '${result.followSymbolicLinks}'`);
-        }
-        if (typeof copy.implicitDescendants === 'boolean') {
-            result.implicitDescendants = copy.implicitDescendants;
-            core.debug(`implicitDescendants '${result.implicitDescendants}'`);
-        }
-        if (typeof copy.omitBrokenSymbolicLinks === 'boolean') {
-            result.omitBrokenSymbolicLinks = copy.omitBrokenSymbolicLinks;
-            core.debug(`omitBrokenSymbolicLinks '${result.omitBrokenSymbolicLinks}'`);
-        }
-    }
-    return result;
-}
-exports.getOptions = getOptions;
-//# sourceMappingURL=internal-glob-options-helper.js.map
-
-/***/ }),
-
 /***/ 87:
 /***/ (function(module) {
 
@@ -168,982 +50,7 @@ module.exports = require("os");
 
 /***/ }),
 
-/***/ 153:
-/***/ (function(__unusedmodule, exports) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-class SearchState {
-    constructor(path, level) {
-        this.path = path;
-        this.level = level;
-    }
-}
-exports.SearchState = SearchState;
-//# sourceMappingURL=internal-search-state.js.map
-
-/***/ }),
-
-/***/ 183:
-/***/ (function(module) {
-
-"use strict";
-
-module.exports = balanced;
-function balanced(a, b, str) {
-  if (a instanceof RegExp) a = maybeMatch(a, str);
-  if (b instanceof RegExp) b = maybeMatch(b, str);
-
-  var r = range(a, b, str);
-
-  return r && {
-    start: r[0],
-    end: r[1],
-    pre: str.slice(0, r[0]),
-    body: str.slice(r[0] + a.length, r[1]),
-    post: str.slice(r[1] + b.length)
-  };
-}
-
-function maybeMatch(reg, str) {
-  var m = str.match(reg);
-  return m ? m[0] : null;
-}
-
-balanced.range = range;
-function range(a, b, str) {
-  var begs, beg, left, right, result;
-  var ai = str.indexOf(a);
-  var bi = str.indexOf(b, ai + 1);
-  var i = ai;
-
-  if (ai >= 0 && bi > 0) {
-    begs = [];
-    left = str.length;
-
-    while (i >= 0 && !result) {
-      if (i == ai) {
-        begs.push(i);
-        ai = str.indexOf(a, i + 1);
-      } else if (begs.length == 1) {
-        result = [ begs.pop(), bi ];
-      } else {
-        beg = begs.pop();
-        if (beg < left) {
-          left = beg;
-          right = bi;
-        }
-
-        bi = str.indexOf(b, i + 1);
-      }
-
-      i = ai < bi && ai >= 0 ? ai : bi;
-    }
-
-    if (begs.length) {
-      result = [ left, right ];
-    }
-  }
-
-  return result;
-}
-
-
-/***/ }),
-
-/***/ 195:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const assert = __webpack_require__(357);
-const path = __webpack_require__(622);
-const IS_WINDOWS = process.platform === 'win32';
-/**
- * Similar to path.dirname except normalizes the path separators and slightly better handling for Windows UNC paths.
- *
- * For example, on Linux/macOS:
- * - `/               => /`
- * - `/hello          => /`
- *
- * For example, on Windows:
- * - `C:\             => C:\`
- * - `C:\hello        => C:\`
- * - `C:              => C:`
- * - `C:hello         => C:`
- * - `\               => \`
- * - `\hello          => \`
- * - `\\hello         => \\hello`
- * - `\\hello\world   => \\hello\world`
- */
-function dirname(p) {
-    // Normalize slashes and trim unnecessary trailing slash
-    p = safeTrimTrailingSeparator(p);
-    // Windows UNC root, e.g. \\hello or \\hello\world
-    if (IS_WINDOWS && /^\\\\[^\\]+(\\[^\\]+)?$/.test(p)) {
-        return p;
-    }
-    // Get dirname
-    let result = path.dirname(p);
-    // Trim trailing slash for Windows UNC root, e.g. \\hello\world\
-    if (IS_WINDOWS && /^\\\\[^\\]+\\[^\\]+\\$/.test(result)) {
-        result = safeTrimTrailingSeparator(result);
-    }
-    return result;
-}
-exports.dirname = dirname;
-/**
- * Roots the path if not already rooted. On Windows, relative roots like `\`
- * or `C:` are expanded based on the current working directory.
- */
-function ensureAbsoluteRoot(root, itemPath) {
-    assert(root, `ensureAbsoluteRoot parameter 'root' must not be empty`);
-    assert(itemPath, `ensureAbsoluteRoot parameter 'itemPath' must not be empty`);
-    // Already rooted
-    if (hasAbsoluteRoot(itemPath)) {
-        return itemPath;
-    }
-    // Windows
-    if (IS_WINDOWS) {
-        // Check for itemPath like C: or C:foo
-        if (itemPath.match(/^[A-Z]:[^\\/]|^[A-Z]:$/i)) {
-            let cwd = process.cwd();
-            assert(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
-            // Drive letter matches cwd? Expand to cwd
-            if (itemPath[0].toUpperCase() === cwd[0].toUpperCase()) {
-                // Drive only, e.g. C:
-                if (itemPath.length === 2) {
-                    // Preserve specified drive letter case (upper or lower)
-                    return `${itemPath[0]}:\\${cwd.substr(3)}`;
-                }
-                // Drive + path, e.g. C:foo
-                else {
-                    if (!cwd.endsWith('\\')) {
-                        cwd += '\\';
-                    }
-                    // Preserve specified drive letter case (upper or lower)
-                    return `${itemPath[0]}:\\${cwd.substr(3)}${itemPath.substr(2)}`;
-                }
-            }
-            // Different drive
-            else {
-                return `${itemPath[0]}:\\${itemPath.substr(2)}`;
-            }
-        }
-        // Check for itemPath like \ or \foo
-        else if (normalizeSeparators(itemPath).match(/^\\$|^\\[^\\]/)) {
-            const cwd = process.cwd();
-            assert(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
-            return `${cwd[0]}:\\${itemPath.substr(1)}`;
-        }
-    }
-    assert(hasAbsoluteRoot(root), `ensureAbsoluteRoot parameter 'root' must have an absolute root`);
-    // Otherwise ensure root ends with a separator
-    if (root.endsWith('/') || (IS_WINDOWS && root.endsWith('\\'))) {
-        // Intentionally empty
-    }
-    else {
-        // Append separator
-        root += path.sep;
-    }
-    return root + itemPath;
-}
-exports.ensureAbsoluteRoot = ensureAbsoluteRoot;
-/**
- * On Linux/macOS, true if path starts with `/`. On Windows, true for paths like:
- * `\\hello\share` and `C:\hello` (and using alternate separator).
- */
-function hasAbsoluteRoot(itemPath) {
-    assert(itemPath, `hasAbsoluteRoot parameter 'itemPath' must not be empty`);
-    // Normalize separators
-    itemPath = normalizeSeparators(itemPath);
-    // Windows
-    if (IS_WINDOWS) {
-        // E.g. \\hello\share or C:\hello
-        return itemPath.startsWith('\\\\') || /^[A-Z]:\\/i.test(itemPath);
-    }
-    // E.g. /hello
-    return itemPath.startsWith('/');
-}
-exports.hasAbsoluteRoot = hasAbsoluteRoot;
-/**
- * On Linux/macOS, true if path starts with `/`. On Windows, true for paths like:
- * `\`, `\hello`, `\\hello\share`, `C:`, and `C:\hello` (and using alternate separator).
- */
-function hasRoot(itemPath) {
-    assert(itemPath, `isRooted parameter 'itemPath' must not be empty`);
-    // Normalize separators
-    itemPath = normalizeSeparators(itemPath);
-    // Windows
-    if (IS_WINDOWS) {
-        // E.g. \ or \hello or \\hello
-        // E.g. C: or C:\hello
-        return itemPath.startsWith('\\') || /^[A-Z]:/i.test(itemPath);
-    }
-    // E.g. /hello
-    return itemPath.startsWith('/');
-}
-exports.hasRoot = hasRoot;
-/**
- * Removes redundant slashes and converts `/` to `\` on Windows
- */
-function normalizeSeparators(p) {
-    p = p || '';
-    // Windows
-    if (IS_WINDOWS) {
-        // Convert slashes on Windows
-        p = p.replace(/\//g, '\\');
-        // Remove redundant slashes
-        const isUnc = /^\\\\+[^\\]/.test(p); // e.g. \\hello
-        return (isUnc ? '\\' : '') + p.replace(/\\\\+/g, '\\'); // preserve leading \\ for UNC
-    }
-    // Remove redundant slashes
-    return p.replace(/\/\/+/g, '/');
-}
-exports.normalizeSeparators = normalizeSeparators;
-/**
- * Normalizes the path separators and trims the trailing separator (when safe).
- * For example, `/foo/ => /foo` but `/ => /`
- */
-function safeTrimTrailingSeparator(p) {
-    // Short-circuit if empty
-    if (!p) {
-        return '';
-    }
-    // Normalize separators
-    p = normalizeSeparators(p);
-    // No trailing slash
-    if (!p.endsWith(path.sep)) {
-        return p;
-    }
-    // Check '/' on Linux/macOS and '\' on Windows
-    if (p === path.sep) {
-        return p;
-    }
-    // On Windows check if drive root. E.g. C:\
-    if (IS_WINDOWS && /^[A-Z]:\\$/i.test(p)) {
-        return p;
-    }
-    // Otherwise trim trailing slash
-    return p.substr(0, p.length - 1);
-}
-exports.safeTrimTrailingSeparator = safeTrimTrailingSeparator;
-//# sourceMappingURL=internal-path-helper.js.map
-
-/***/ }),
-
-/***/ 249:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const os = __importStar(__webpack_require__(87));
-/**
- * Commands
- *
- * Command Format:
- *   ::name key=value,key=value::message
- *
- * Examples:
- *   ::warning::This is the message
- *   ::set-env name=MY_VAR::some value
- */
-function issueCommand(command, properties, message) {
-    const cmd = new Command(command, properties, message);
-    process.stdout.write(cmd.toString() + os.EOL);
-}
-exports.issueCommand = issueCommand;
-function issue(name, message = '') {
-    issueCommand(name, {}, message);
-}
-exports.issue = issue;
-const CMD_STRING = '::';
-class Command {
-    constructor(command, properties, message) {
-        if (!command) {
-            command = 'missing.command';
-        }
-        this.command = command;
-        this.properties = properties;
-        this.message = message;
-    }
-    toString() {
-        let cmdStr = CMD_STRING + this.command;
-        if (this.properties && Object.keys(this.properties).length > 0) {
-            cmdStr += ' ';
-            let first = true;
-            for (const key in this.properties) {
-                if (this.properties.hasOwnProperty(key)) {
-                    const val = this.properties[key];
-                    if (val) {
-                        if (first) {
-                            first = false;
-                        }
-                        else {
-                            cmdStr += ',';
-                        }
-                        cmdStr += `${key}=${escapeProperty(val)}`;
-                    }
-                }
-            }
-        }
-        cmdStr += `${CMD_STRING}${escapeData(this.message)}`;
-        return cmdStr;
-    }
-}
-function escapeData(s) {
-    return (s || '')
-        .replace(/%/g, '%25')
-        .replace(/\r/g, '%0D')
-        .replace(/\n/g, '%0A');
-}
-function escapeProperty(s) {
-    return (s || '')
-        .replace(/%/g, '%25')
-        .replace(/\r/g, '%0D')
-        .replace(/\n/g, '%0A')
-        .replace(/:/g, '%3A')
-        .replace(/,/g, '%2C');
-}
-//# sourceMappingURL=command.js.map
-
-/***/ }),
-
-/***/ 273:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const internal_globber_1 = __webpack_require__(914);
-/**
- * Constructs a globber
- *
- * @param patterns  Patterns separated by newlines
- * @param options   Glob options
- */
-function create(patterns, options) {
-    return __awaiter(this, void 0, void 0, function* () {
-        return yield internal_globber_1.DefaultGlobber.create(patterns, options);
-    });
-}
-exports.create = create;
-//# sourceMappingURL=glob.js.map
-
-/***/ }),
-
-/***/ 357:
-/***/ (function(module) {
-
-module.exports = require("assert");
-
-/***/ }),
-
-/***/ 417:
-/***/ (function(module) {
-
-module.exports = require("crypto");
-
-/***/ }),
-
-/***/ 460:
-/***/ (function(module) {
-
-module.exports = function (xs, fn) {
-    var res = [];
-    for (var i = 0; i < xs.length; i++) {
-        var x = fn(xs[i], i);
-        if (isArray(x)) res.push.apply(res, x);
-        else res.push(x);
-    }
-    return res;
-};
-
-var isArray = Array.isArray || function (xs) {
-    return Object.prototype.toString.call(xs) === '[object Array]';
-};
-
-
-/***/ }),
-
-/***/ 576:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
-    result["default"] = mod;
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const command_1 = __webpack_require__(249);
-const os = __importStar(__webpack_require__(87));
-const path = __importStar(__webpack_require__(622));
-/**
- * The code to exit an action
- */
-var ExitCode;
-(function (ExitCode) {
-    /**
-     * A code indicating that the action was successful
-     */
-    ExitCode[ExitCode["Success"] = 0] = "Success";
-    /**
-     * A code indicating that the action was a failure
-     */
-    ExitCode[ExitCode["Failure"] = 1] = "Failure";
-})(ExitCode = exports.ExitCode || (exports.ExitCode = {}));
-//-----------------------------------------------------------------------
-// Variables
-//-----------------------------------------------------------------------
-/**
- * Sets env variable for this action and future actions in the job
- * @param name the name of the variable to set
- * @param val the value of the variable
- */
-function exportVariable(name, val) {
-    process.env[name] = val;
-    command_1.issueCommand('set-env', { name }, val);
-}
-exports.exportVariable = exportVariable;
-/**
- * Registers a secret which will get masked from logs
- * @param secret value of the secret
- */
-function setSecret(secret) {
-    command_1.issueCommand('add-mask', {}, secret);
-}
-exports.setSecret = setSecret;
-/**
- * Prepends inputPath to the PATH (for this action and future actions)
- * @param inputPath
- */
-function addPath(inputPath) {
-    command_1.issueCommand('add-path', {}, inputPath);
-    process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
-}
-exports.addPath = addPath;
-/**
- * Gets the value of an input.  The value is also trimmed.
- *
- * @param     name     name of the input to get
- * @param     options  optional. See InputOptions.
- * @returns   string
- */
-function getInput(name, options) {
-    const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
-    if (options && options.required && !val) {
-        throw new Error(`Input required and not supplied: ${name}`);
-    }
-    return val.trim();
-}
-exports.getInput = getInput;
-/**
- * Sets the value of an output.
- *
- * @param     name     name of the output to set
- * @param     value    value to store
- */
-function setOutput(name, value) {
-    command_1.issueCommand('set-output', { name }, value);
-}
-exports.setOutput = setOutput;
-//-----------------------------------------------------------------------
-// Results
-//-----------------------------------------------------------------------
-/**
- * Sets the action status to failed.
- * When the action exits it will be with an exit code of 1
- * @param message add error issue message
- */
-function setFailed(message) {
-    process.exitCode = ExitCode.Failure;
-    error(message);
-}
-exports.setFailed = setFailed;
-//-----------------------------------------------------------------------
-// Logging Commands
-//-----------------------------------------------------------------------
-/**
- * Writes debug message to user log
- * @param message debug message
- */
-function debug(message) {
-    command_1.issueCommand('debug', {}, message);
-}
-exports.debug = debug;
-/**
- * Adds an error issue
- * @param message error issue message
- */
-function error(message) {
-    command_1.issue('error', message);
-}
-exports.error = error;
-/**
- * Adds an warning issue
- * @param message warning issue message
- */
-function warning(message) {
-    command_1.issue('warning', message);
-}
-exports.warning = warning;
-/**
- * Writes info to log with console.log.
- * @param message info message
- */
-function info(message) {
-    process.stdout.write(message + os.EOL);
-}
-exports.info = info;
-/**
- * Begin an output group.
- *
- * Output until the next `groupEnd` will be foldable in this group
- *
- * @param name The name of the output group
- */
-function startGroup(name) {
-    command_1.issue('group', name);
-}
-exports.startGroup = startGroup;
-/**
- * End an output group.
- */
-function endGroup() {
-    command_1.issue('endgroup');
-}
-exports.endGroup = endGroup;
-/**
- * Wrap an asynchronous function call in a group.
- *
- * Returns the same type as the function itself.
- *
- * @param name The name of the group
- * @param fn The function to wrap in the group
- */
-function group(name, fn) {
-    return __awaiter(this, void 0, void 0, function* () {
-        startGroup(name);
-        let result;
-        try {
-            result = yield fn();
-        }
-        finally {
-            endGroup();
-        }
-        return result;
-    });
-}
-exports.group = group;
-//-----------------------------------------------------------------------
-// Wrapper action state
-//-----------------------------------------------------------------------
-/**
- * Saves state for current action, the state can only be retrieved by this action's post job execution.
- *
- * @param     name     name of the state to store
- * @param     value    value to store
- */
-function saveState(name, value) {
-    command_1.issueCommand('save-state', { name }, value);
-}
-exports.saveState = saveState;
-/**
- * Gets the value of an state set by this action's main execution.
- *
- * @param     name     name of the state to get
- * @returns   string
- */
-function getState(name) {
-    return process.env[`STATE_${name}`] || '';
-}
-exports.getState = getState;
-//# sourceMappingURL=core.js.map
-
-/***/ }),
-
-/***/ 605:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const assert = __webpack_require__(357);
-const path = __webpack_require__(622);
-const pathHelper = __webpack_require__(195);
-const IS_WINDOWS = process.platform === 'win32';
-/**
- * Helper class for parsing paths into segments
- */
-class Path {
-    /**
-     * Constructs a Path
-     * @param itemPath Path or array of segments
-     */
-    constructor(itemPath) {
-        this.segments = [];
-        // String
-        if (typeof itemPath === 'string') {
-            assert(itemPath, `Parameter 'itemPath' must not be empty`);
-            // Normalize slashes and trim unnecessary trailing slash
-            itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
-            // Not rooted
-            if (!pathHelper.hasRoot(itemPath)) {
-                this.segments = itemPath.split(path.sep);
-            }
-            // Rooted
-            else {
-                // Add all segments, while not at the root
-                let remaining = itemPath;
-                let dir = pathHelper.dirname(remaining);
-                while (dir !== remaining) {
-                    // Add the segment
-                    const basename = path.basename(remaining);
-                    this.segments.unshift(basename);
-                    // Truncate the last segment
-                    remaining = dir;
-                    dir = pathHelper.dirname(remaining);
-                }
-                // Remainder is the root
-                this.segments.unshift(remaining);
-            }
-        }
-        // Array
-        else {
-            // Must not be empty
-            assert(itemPath.length > 0, `Parameter 'itemPath' must not be an empty array`);
-            // Each segment
-            for (let i = 0; i < itemPath.length; i++) {
-                let segment = itemPath[i];
-                // Must not be empty
-                assert(segment, `Parameter 'itemPath' must not contain any empty segments`);
-                // Normalize slashes
-                segment = pathHelper.normalizeSeparators(itemPath[i]);
-                // Root segment
-                if (i === 0 && pathHelper.hasRoot(segment)) {
-                    segment = pathHelper.safeTrimTrailingSeparator(segment);
-                    assert(segment === pathHelper.dirname(segment), `Parameter 'itemPath' root segment contains information for multiple segments`);
-                    this.segments.push(segment);
-                }
-                // All other segments
-                else {
-                    // Must not contain slash
-                    assert(!segment.includes(path.sep), `Parameter 'itemPath' contains unexpected path separators`);
-                    this.segments.push(segment);
-                }
-            }
-        }
-    }
-    /**
-     * Converts the path to it's string representation
-     */
-    toString() {
-        // First segment
-        let result = this.segments[0];
-        // All others
-        let skipSlash = result.endsWith(path.sep) || (IS_WINDOWS && /^[A-Z]:$/i.test(result));
-        for (let i = 1; i < this.segments.length; i++) {
-            if (skipSlash) {
-                skipSlash = false;
-            }
-            else {
-                result += path.sep;
-            }
-            result += this.segments[i];
-        }
-        return result;
-    }
-}
-exports.Path = Path;
-//# sourceMappingURL=internal-path.js.map
-
-/***/ }),
-
-/***/ 622:
-/***/ (function(module) {
-
-module.exports = require("path");
-
-/***/ }),
-
-/***/ 734:
-/***/ (function(__unusedmodule, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-const assert = __webpack_require__(357);
-const os = __webpack_require__(87);
-const path = __webpack_require__(622);
-const pathHelper = __webpack_require__(195);
-const minimatch_1 = __webpack_require__(871);
-const internal_match_kind_1 = __webpack_require__(977);
-const internal_path_1 = __webpack_require__(605);
-const IS_WINDOWS = process.platform === 'win32';
-class Pattern {
-    constructor(patternOrNegate, segments) {
-        /**
-         * Indicates whether matches should be excluded from the result set
-         */
-        this.negate = false;
-        // Pattern overload
-        let pattern;
-        if (typeof patternOrNegate === 'string') {
-            pattern = patternOrNegate.trim();
-        }
-        // Segments overload
-        else {
-            // Convert to pattern
-            segments = segments || [];
-            assert(segments.length, `Parameter 'segments' must not empty`);
-            const root = Pattern.getLiteral(segments[0]);
-            assert(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
-            pattern = new internal_path_1.Path(segments).toString().trim();
-            if (patternOrNegate) {
-                pattern = `!${pattern}`;
-            }
-        }
-        // Negate
-        while (pattern.startsWith('!')) {
-            this.negate = !this.negate;
-            pattern = pattern.substr(1).trim();
-        }
-        // Normalize slashes and ensures absolute root
-        pattern = Pattern.fixupPattern(pattern);
-        // Segments
-        this.segments = new internal_path_1.Path(pattern).segments;
-        // Trailing slash indicates the pattern should only match directories, not regular files
-        this.trailingSeparator = pathHelper
-            .normalizeSeparators(pattern)
-            .endsWith(path.sep);
-        pattern = pathHelper.safeTrimTrailingSeparator(pattern);
-        // Search path (literal path prior to the first glob segment)
-        let foundGlob = false;
-        const searchSegments = this.segments
-            .map(x => Pattern.getLiteral(x))
-            .filter(x => !foundGlob && !(foundGlob = x === ''));
-        this.searchPath = new internal_path_1.Path(searchSegments).toString();
-        // Root RegExp (required when determining partial match)
-        this.rootRegExp = new RegExp(Pattern.regExpEscape(searchSegments[0]), IS_WINDOWS ? 'i' : '');
-        // Create minimatch
-        const minimatchOptions = {
-            dot: true,
-            nobrace: true,
-            nocase: IS_WINDOWS,
-            nocomment: true,
-            noext: true,
-            nonegate: true
-        };
-        pattern = IS_WINDOWS ? pattern.replace(/\\/g, '/') : pattern;
-        this.minimatch = new minimatch_1.Minimatch(pattern, minimatchOptions);
-    }
-    /**
-     * Matches the pattern against the specified path
-     */
-    match(itemPath) {
-        // Last segment is globstar?
-        if (this.segments[this.segments.length - 1] === '**') {
-            // Normalize slashes
-            itemPath = pathHelper.normalizeSeparators(itemPath);
-            // Append a trailing slash. Otherwise Minimatch will not match the directory immediately
-            // preceeding the globstar. For example, given the pattern `/foo/**`, Minimatch returns
-            // false for `/foo` but returns true for `/foo/`. Append a trailing slash to handle that quirk.
-            if (!itemPath.endsWith(path.sep)) {
-                // Note, this is safe because the constructor ensures the pattern has an absolute root.
-                // For example, formats like C: and C:foo on Windows are resolved to an aboslute root.
-                itemPath = `${itemPath}${path.sep}`;
-            }
-        }
-        else {
-            // Normalize slashes and trim unnecessary trailing slash
-            itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
-        }
-        // Match
-        if (this.minimatch.match(itemPath)) {
-            return this.trailingSeparator ? internal_match_kind_1.MatchKind.Directory : internal_match_kind_1.MatchKind.All;
-        }
-        return internal_match_kind_1.MatchKind.None;
-    }
-    /**
-     * Indicates whether the pattern may match descendants of the specified path
-     */
-    partialMatch(itemPath) {
-        // Normalize slashes and trim unnecessary trailing slash
-        itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
-        // matchOne does not handle root path correctly
-        if (pathHelper.dirname(itemPath) === itemPath) {
-            return this.rootRegExp.test(itemPath);
-        }
-        return this.minimatch.matchOne(itemPath.split(IS_WINDOWS ? /\\+/ : /\/+/), this.minimatch.set[0], true);
-    }
-    /**
-     * Escapes glob patterns within a path
-     */
-    static globEscape(s) {
-        return (IS_WINDOWS ? s : s.replace(/\\/g, '\\\\')) // escape '\' on Linux/macOS
-            .replace(/(\[)(?=[^/]+\])/g, '[[]') // escape '[' when ']' follows within the path segment
-            .replace(/\?/g, '[?]') // escape '?'
-            .replace(/\*/g, '[*]'); // escape '*'
-    }
-    /**
-     * Normalizes slashes and ensures absolute root
-     */
-    static fixupPattern(pattern) {
-        // Empty
-        assert(pattern, 'pattern cannot be empty');
-        // Must not contain `.` segment, unless first segment
-        // Must not contain `..` segment
-        const literalSegments = new internal_path_1.Path(pattern).segments.map(x => Pattern.getLiteral(x));
-        assert(literalSegments.every((x, i) => (x !== '.' || i === 0) && x !== '..'), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
-        // Must not contain globs in root, e.g. Windows UNC path \\foo\b*r
-        assert(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
-        // Normalize slashes
-        pattern = pathHelper.normalizeSeparators(pattern);
-        // Replace leading `.` segment
-        if (pattern === '.' || pattern.startsWith(`.${path.sep}`)) {
-            pattern = Pattern.globEscape(process.cwd()) + pattern.substr(1);
-        }
-        // Replace leading `~` segment
-        else if (pattern === '~' || pattern.startsWith(`~${path.sep}`)) {
-            const homedir = os.homedir();
-            assert(homedir, 'Unable to determine HOME directory');
-            assert(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
-            pattern = Pattern.globEscape(homedir) + pattern.substr(1);
-        }
-        // Replace relative drive root, e.g. pattern is C: or C:foo
-        else if (IS_WINDOWS &&
-            (pattern.match(/^[A-Z]:$/i) || pattern.match(/^[A-Z]:[^\\]/i))) {
-            let root = pathHelper.ensureAbsoluteRoot('C:\\dummy-root', pattern.substr(0, 2));
-            if (pattern.length > 2 && !root.endsWith('\\')) {
-                root += '\\';
-            }
-            pattern = Pattern.globEscape(root) + pattern.substr(2);
-        }
-        // Replace relative root, e.g. pattern is \ or \foo
-        else if (IS_WINDOWS && (pattern === '\\' || pattern.match(/^\\[^\\]/))) {
-            let root = pathHelper.ensureAbsoluteRoot('C:\\dummy-root', '\\');
-            if (!root.endsWith('\\')) {
-                root += '\\';
-            }
-            pattern = Pattern.globEscape(root) + pattern.substr(1);
-        }
-        // Otherwise ensure absolute root
-        else {
-            pattern = pathHelper.ensureAbsoluteRoot(Pattern.globEscape(process.cwd()), pattern);
-        }
-        return pathHelper.normalizeSeparators(pattern);
-    }
-    /**
-     * Attempts to unescape a pattern segment to create a literal path segment.
-     * Otherwise returns empty string.
-     */
-    static getLiteral(segment) {
-        let literal = '';
-        for (let i = 0; i < segment.length; i++) {
-            const c = segment[i];
-            // Escape
-            if (c === '\\' && !IS_WINDOWS && i + 1 < segment.length) {
-                literal += segment[++i];
-                continue;
-            }
-            // Wildcard
-            else if (c === '*' || c === '?') {
-                return '';
-            }
-            // Character set
-            else if (c === '[' && i + 1 < segment.length) {
-                let set = '';
-                let closed = -1;
-                for (let i2 = i + 1; i2 < segment.length; i2++) {
-                    const c2 = segment[i2];
-                    // Escape
-                    if (c2 === '\\' && !IS_WINDOWS && i2 + 1 < segment.length) {
-                        set += segment[++i2];
-                        continue;
-                    }
-                    // Closed
-                    else if (c2 === ']') {
-                        closed = i2;
-                        break;
-                    }
-                    // Otherwise
-                    else {
-                        set += c2;
-                    }
-                }
-                // Closed?
-                if (closed >= 0) {
-                    // Cannot convert
-                    if (set.length > 1) {
-                        return '';
-                    }
-                    // Convert to literal
-                    if (set) {
-                        literal += set;
-                        i = closed;
-                        continue;
-                    }
-                }
-                // Otherwise fall thru
-            }
-            // Append
-            literal += c;
-        }
-        return literal;
-    }
-    /**
-     * Escapes regexp special characters
-     * https://javascript.info/regexp-escaping
-     */
-    static regExpEscape(s) {
-        return s.replace(/[[\\^$.|?*+()]/g, '\\$&');
-    }
-}
-exports.Pattern = Pattern;
-//# sourceMappingURL=internal-pattern.js.map
-
-/***/ }),
-
-/***/ 747:
-/***/ (function(module) {
-
-module.exports = require("fs");
-
-/***/ }),
-
-/***/ 871:
+/***/ 93:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
 module.exports = minimatch
@@ -1155,7 +62,7 @@ try {
 } catch (er) {}
 
 var GLOBSTAR = minimatch.GLOBSTAR = Minimatch.GLOBSTAR = {}
-var expand = __webpack_require__(945)
+var expand = __webpack_require__(306)
 
 var plTypes = {
   '!': { open: '(?:(?!(?:', close: '))[^/]*?)'},
@@ -2073,7 +980,61 @@ function regExpEscape (s) {
 
 /***/ }),
 
-/***/ 914:
+/***/ 104:
+/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
+
+const core = __webpack_require__(470);
+const glob = __webpack_require__(281);
+var sha256File = __webpack_require__(429);
+
+const patterns = ['dist/tar.gz', 'dist/tar.bz', 'dist/tgz']
+async function run() {
+    const globber = await glob.create(patterns.join('\n'))
+    const files = await globber.glob()
+    files.forEach(function (file) {
+        hash = sha256File(file);
+        console.log(hash + " " + file);
+        core.setOutput('sha.' + file, hash);
+    });
+}
+run()
+
+
+/***/ }),
+
+/***/ 281:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const internal_globber_1 = __webpack_require__(297);
+/**
+ * Constructs a globber
+ *
+ * @param patterns  Patterns separated by newlines
+ * @param options   Glob options
+ */
+function create(patterns, options) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return yield internal_globber_1.DefaultGlobber.create(patterns, options);
+    });
+}
+exports.create = create;
+//# sourceMappingURL=glob.js.map
+
+/***/ }),
+
+/***/ 297:
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
 "use strict";
@@ -2107,14 +1068,14 @@ var __asyncGenerator = (this && this.__asyncGenerator) || function (thisArg, _ar
     function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const core = __webpack_require__(576);
+const core = __webpack_require__(470);
 const fs = __webpack_require__(747);
-const globOptionsHelper = __webpack_require__(23);
+const globOptionsHelper = __webpack_require__(601);
 const path = __webpack_require__(622);
-const patternHelper = __webpack_require__(21);
-const internal_match_kind_1 = __webpack_require__(977);
-const internal_pattern_1 = __webpack_require__(734);
-const internal_search_state_1 = __webpack_require__(153);
+const patternHelper = __webpack_require__(597);
+const internal_match_kind_1 = __webpack_require__(327);
+const internal_pattern_1 = __webpack_require__(923);
+const internal_search_state_1 = __webpack_require__(728);
 const IS_WINDOWS = process.platform === 'win32';
 class DefaultGlobber {
     constructor(options) {
@@ -2295,46 +1256,11 @@ exports.DefaultGlobber = DefaultGlobber;
 
 /***/ }),
 
-/***/ 921:
+/***/ 306:
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
-"use strict";
-
-
-var crypto = __webpack_require__(417);
-var fs = __webpack_require__(747);
-
-module.exports = function (filename, callback) {
-  var sum = crypto.createHash('sha256');
-  if (callback && typeof callback === 'function') {
-    var fileStream = fs.createReadStream(filename);
-    fileStream.on('error', function (err) {
-      return callback(err, null)
-    });
-    fileStream.on('data', function (chunk) {
-      try {
-        sum.update(chunk)
-      } catch (ex) {
-        return callback(ex, null)
-      }
-    });
-    fileStream.on('end', function () {
-      return callback(null, sum.digest('hex'))
-    })
-  } else {
-    sum.update(fs.readFileSync(filename));
-    return sum.digest('hex')
-  }
-};
-
-
-/***/ }),
-
-/***/ 945:
-/***/ (function(module, __unusedexports, __webpack_require__) {
-
-var concatMap = __webpack_require__(460);
-var balanced = __webpack_require__(183);
+var concatMap = __webpack_require__(896);
+var balanced = __webpack_require__(621);
 
 module.exports = expandTop;
 
@@ -2538,26 +1464,7 @@ function expand(str, isTop) {
 
 /***/ }),
 
-/***/ 973:
-/***/ (function(__unusedmodule, __unusedexports, __webpack_require__) {
-
-const core = __webpack_require__(576);
-const glob = __webpack_require__(273);
-var sha256File = __webpack_require__(921);
-
-const patterns = ['dist/tar.gz', 'dist/tar.bz', 'dist/tgz']
-const globber = glob.create(patterns.join('\n'))
-const files = globber.glob()
-files.forEach(function (file) {
-    hash = sha256File(file);
-    console.log(hash + " " + file);
-    core.setOutput('sha.' + file, hash);
-});
-
-
-/***/ }),
-
-/***/ 977:
+/***/ 327:
 /***/ (function(__unusedmodule, exports) {
 
 "use strict";
@@ -2578,6 +1485,1102 @@ var MatchKind;
     MatchKind[MatchKind["All"] = 3] = "All";
 })(MatchKind = exports.MatchKind || (exports.MatchKind = {}));
 //# sourceMappingURL=internal-match-kind.js.map
+
+/***/ }),
+
+/***/ 357:
+/***/ (function(module) {
+
+module.exports = require("assert");
+
+/***/ }),
+
+/***/ 383:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const assert = __webpack_require__(357);
+const path = __webpack_require__(622);
+const pathHelper = __webpack_require__(972);
+const IS_WINDOWS = process.platform === 'win32';
+/**
+ * Helper class for parsing paths into segments
+ */
+class Path {
+    /**
+     * Constructs a Path
+     * @param itemPath Path or array of segments
+     */
+    constructor(itemPath) {
+        this.segments = [];
+        // String
+        if (typeof itemPath === 'string') {
+            assert(itemPath, `Parameter 'itemPath' must not be empty`);
+            // Normalize slashes and trim unnecessary trailing slash
+            itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
+            // Not rooted
+            if (!pathHelper.hasRoot(itemPath)) {
+                this.segments = itemPath.split(path.sep);
+            }
+            // Rooted
+            else {
+                // Add all segments, while not at the root
+                let remaining = itemPath;
+                let dir = pathHelper.dirname(remaining);
+                while (dir !== remaining) {
+                    // Add the segment
+                    const basename = path.basename(remaining);
+                    this.segments.unshift(basename);
+                    // Truncate the last segment
+                    remaining = dir;
+                    dir = pathHelper.dirname(remaining);
+                }
+                // Remainder is the root
+                this.segments.unshift(remaining);
+            }
+        }
+        // Array
+        else {
+            // Must not be empty
+            assert(itemPath.length > 0, `Parameter 'itemPath' must not be an empty array`);
+            // Each segment
+            for (let i = 0; i < itemPath.length; i++) {
+                let segment = itemPath[i];
+                // Must not be empty
+                assert(segment, `Parameter 'itemPath' must not contain any empty segments`);
+                // Normalize slashes
+                segment = pathHelper.normalizeSeparators(itemPath[i]);
+                // Root segment
+                if (i === 0 && pathHelper.hasRoot(segment)) {
+                    segment = pathHelper.safeTrimTrailingSeparator(segment);
+                    assert(segment === pathHelper.dirname(segment), `Parameter 'itemPath' root segment contains information for multiple segments`);
+                    this.segments.push(segment);
+                }
+                // All other segments
+                else {
+                    // Must not contain slash
+                    assert(!segment.includes(path.sep), `Parameter 'itemPath' contains unexpected path separators`);
+                    this.segments.push(segment);
+                }
+            }
+        }
+    }
+    /**
+     * Converts the path to it's string representation
+     */
+    toString() {
+        // First segment
+        let result = this.segments[0];
+        // All others
+        let skipSlash = result.endsWith(path.sep) || (IS_WINDOWS && /^[A-Z]:$/i.test(result));
+        for (let i = 1; i < this.segments.length; i++) {
+            if (skipSlash) {
+                skipSlash = false;
+            }
+            else {
+                result += path.sep;
+            }
+            result += this.segments[i];
+        }
+        return result;
+    }
+}
+exports.Path = Path;
+//# sourceMappingURL=internal-path.js.map
+
+/***/ }),
+
+/***/ 417:
+/***/ (function(module) {
+
+module.exports = require("crypto");
+
+/***/ }),
+
+/***/ 429:
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+var crypto = __webpack_require__(417);
+var fs = __webpack_require__(747);
+
+module.exports = function (filename, callback) {
+  var sum = crypto.createHash('sha256');
+  if (callback && typeof callback === 'function') {
+    var fileStream = fs.createReadStream(filename);
+    fileStream.on('error', function (err) {
+      return callback(err, null)
+    });
+    fileStream.on('data', function (chunk) {
+      try {
+        sum.update(chunk)
+      } catch (ex) {
+        return callback(ex, null)
+      }
+    });
+    fileStream.on('end', function () {
+      return callback(null, sum.digest('hex'))
+    })
+  } else {
+    sum.update(fs.readFileSync(filename));
+    return sum.digest('hex')
+  }
+};
+
+
+/***/ }),
+
+/***/ 431:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const os = __importStar(__webpack_require__(87));
+/**
+ * Commands
+ *
+ * Command Format:
+ *   ::name key=value,key=value::message
+ *
+ * Examples:
+ *   ::warning::This is the message
+ *   ::set-env name=MY_VAR::some value
+ */
+function issueCommand(command, properties, message) {
+    const cmd = new Command(command, properties, message);
+    process.stdout.write(cmd.toString() + os.EOL);
+}
+exports.issueCommand = issueCommand;
+function issue(name, message = '') {
+    issueCommand(name, {}, message);
+}
+exports.issue = issue;
+const CMD_STRING = '::';
+class Command {
+    constructor(command, properties, message) {
+        if (!command) {
+            command = 'missing.command';
+        }
+        this.command = command;
+        this.properties = properties;
+        this.message = message;
+    }
+    toString() {
+        let cmdStr = CMD_STRING + this.command;
+        if (this.properties && Object.keys(this.properties).length > 0) {
+            cmdStr += ' ';
+            let first = true;
+            for (const key in this.properties) {
+                if (this.properties.hasOwnProperty(key)) {
+                    const val = this.properties[key];
+                    if (val) {
+                        if (first) {
+                            first = false;
+                        }
+                        else {
+                            cmdStr += ',';
+                        }
+                        cmdStr += `${key}=${escapeProperty(val)}`;
+                    }
+                }
+            }
+        }
+        cmdStr += `${CMD_STRING}${escapeData(this.message)}`;
+        return cmdStr;
+    }
+}
+function escapeData(s) {
+    return (s || '')
+        .replace(/%/g, '%25')
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A');
+}
+function escapeProperty(s) {
+    return (s || '')
+        .replace(/%/g, '%25')
+        .replace(/\r/g, '%0D')
+        .replace(/\n/g, '%0A')
+        .replace(/:/g, '%3A')
+        .replace(/,/g, '%2C');
+}
+//# sourceMappingURL=command.js.map
+
+/***/ }),
+
+/***/ 470:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result["default"] = mod;
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const command_1 = __webpack_require__(431);
+const os = __importStar(__webpack_require__(87));
+const path = __importStar(__webpack_require__(622));
+/**
+ * The code to exit an action
+ */
+var ExitCode;
+(function (ExitCode) {
+    /**
+     * A code indicating that the action was successful
+     */
+    ExitCode[ExitCode["Success"] = 0] = "Success";
+    /**
+     * A code indicating that the action was a failure
+     */
+    ExitCode[ExitCode["Failure"] = 1] = "Failure";
+})(ExitCode = exports.ExitCode || (exports.ExitCode = {}));
+//-----------------------------------------------------------------------
+// Variables
+//-----------------------------------------------------------------------
+/**
+ * Sets env variable for this action and future actions in the job
+ * @param name the name of the variable to set
+ * @param val the value of the variable
+ */
+function exportVariable(name, val) {
+    process.env[name] = val;
+    command_1.issueCommand('set-env', { name }, val);
+}
+exports.exportVariable = exportVariable;
+/**
+ * Registers a secret which will get masked from logs
+ * @param secret value of the secret
+ */
+function setSecret(secret) {
+    command_1.issueCommand('add-mask', {}, secret);
+}
+exports.setSecret = setSecret;
+/**
+ * Prepends inputPath to the PATH (for this action and future actions)
+ * @param inputPath
+ */
+function addPath(inputPath) {
+    command_1.issueCommand('add-path', {}, inputPath);
+    process.env['PATH'] = `${inputPath}${path.delimiter}${process.env['PATH']}`;
+}
+exports.addPath = addPath;
+/**
+ * Gets the value of an input.  The value is also trimmed.
+ *
+ * @param     name     name of the input to get
+ * @param     options  optional. See InputOptions.
+ * @returns   string
+ */
+function getInput(name, options) {
+    const val = process.env[`INPUT_${name.replace(/ /g, '_').toUpperCase()}`] || '';
+    if (options && options.required && !val) {
+        throw new Error(`Input required and not supplied: ${name}`);
+    }
+    return val.trim();
+}
+exports.getInput = getInput;
+/**
+ * Sets the value of an output.
+ *
+ * @param     name     name of the output to set
+ * @param     value    value to store
+ */
+function setOutput(name, value) {
+    command_1.issueCommand('set-output', { name }, value);
+}
+exports.setOutput = setOutput;
+//-----------------------------------------------------------------------
+// Results
+//-----------------------------------------------------------------------
+/**
+ * Sets the action status to failed.
+ * When the action exits it will be with an exit code of 1
+ * @param message add error issue message
+ */
+function setFailed(message) {
+    process.exitCode = ExitCode.Failure;
+    error(message);
+}
+exports.setFailed = setFailed;
+//-----------------------------------------------------------------------
+// Logging Commands
+//-----------------------------------------------------------------------
+/**
+ * Writes debug message to user log
+ * @param message debug message
+ */
+function debug(message) {
+    command_1.issueCommand('debug', {}, message);
+}
+exports.debug = debug;
+/**
+ * Adds an error issue
+ * @param message error issue message
+ */
+function error(message) {
+    command_1.issue('error', message);
+}
+exports.error = error;
+/**
+ * Adds an warning issue
+ * @param message warning issue message
+ */
+function warning(message) {
+    command_1.issue('warning', message);
+}
+exports.warning = warning;
+/**
+ * Writes info to log with console.log.
+ * @param message info message
+ */
+function info(message) {
+    process.stdout.write(message + os.EOL);
+}
+exports.info = info;
+/**
+ * Begin an output group.
+ *
+ * Output until the next `groupEnd` will be foldable in this group
+ *
+ * @param name The name of the output group
+ */
+function startGroup(name) {
+    command_1.issue('group', name);
+}
+exports.startGroup = startGroup;
+/**
+ * End an output group.
+ */
+function endGroup() {
+    command_1.issue('endgroup');
+}
+exports.endGroup = endGroup;
+/**
+ * Wrap an asynchronous function call in a group.
+ *
+ * Returns the same type as the function itself.
+ *
+ * @param name The name of the group
+ * @param fn The function to wrap in the group
+ */
+function group(name, fn) {
+    return __awaiter(this, void 0, void 0, function* () {
+        startGroup(name);
+        let result;
+        try {
+            result = yield fn();
+        }
+        finally {
+            endGroup();
+        }
+        return result;
+    });
+}
+exports.group = group;
+//-----------------------------------------------------------------------
+// Wrapper action state
+//-----------------------------------------------------------------------
+/**
+ * Saves state for current action, the state can only be retrieved by this action's post job execution.
+ *
+ * @param     name     name of the state to store
+ * @param     value    value to store
+ */
+function saveState(name, value) {
+    command_1.issueCommand('save-state', { name }, value);
+}
+exports.saveState = saveState;
+/**
+ * Gets the value of an state set by this action's main execution.
+ *
+ * @param     name     name of the state to get
+ * @returns   string
+ */
+function getState(name) {
+    return process.env[`STATE_${name}`] || '';
+}
+exports.getState = getState;
+//# sourceMappingURL=core.js.map
+
+/***/ }),
+
+/***/ 597:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const pathHelper = __webpack_require__(972);
+const internal_match_kind_1 = __webpack_require__(327);
+const IS_WINDOWS = process.platform === 'win32';
+/**
+ * Given an array of patterns, returns an array of paths to search.
+ * Duplicates and paths under other included paths are filtered out.
+ */
+function getSearchPaths(patterns) {
+    // Ignore negate patterns
+    patterns = patterns.filter(x => !x.negate);
+    // Create a map of all search paths
+    const searchPathMap = {};
+    for (const pattern of patterns) {
+        const key = IS_WINDOWS
+            ? pattern.searchPath.toUpperCase()
+            : pattern.searchPath;
+        searchPathMap[key] = 'candidate';
+    }
+    const result = [];
+    for (const pattern of patterns) {
+        // Check if already included
+        const key = IS_WINDOWS
+            ? pattern.searchPath.toUpperCase()
+            : pattern.searchPath;
+        if (searchPathMap[key] === 'included') {
+            continue;
+        }
+        // Check for an ancestor search path
+        let foundAncestor = false;
+        let tempKey = key;
+        let parent = pathHelper.dirname(tempKey);
+        while (parent !== tempKey) {
+            if (searchPathMap[parent]) {
+                foundAncestor = true;
+                break;
+            }
+            tempKey = parent;
+            parent = pathHelper.dirname(tempKey);
+        }
+        // Include the search pattern in the result
+        if (!foundAncestor) {
+            result.push(pattern.searchPath);
+            searchPathMap[key] = 'included';
+        }
+    }
+    return result;
+}
+exports.getSearchPaths = getSearchPaths;
+/**
+ * Matches the patterns against the path
+ */
+function match(patterns, itemPath) {
+    let result = internal_match_kind_1.MatchKind.None;
+    for (const pattern of patterns) {
+        if (pattern.negate) {
+            result &= ~pattern.match(itemPath);
+        }
+        else {
+            result |= pattern.match(itemPath);
+        }
+    }
+    return result;
+}
+exports.match = match;
+/**
+ * Checks whether to descend further into the directory
+ */
+function partialMatch(patterns, itemPath) {
+    return patterns.some(x => !x.negate && x.partialMatch(itemPath));
+}
+exports.partialMatch = partialMatch;
+//# sourceMappingURL=internal-pattern-helper.js.map
+
+/***/ }),
+
+/***/ 601:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const core = __webpack_require__(470);
+/**
+ * Returns a copy with defaults filled in.
+ */
+function getOptions(copy) {
+    const result = {
+        followSymbolicLinks: true,
+        implicitDescendants: true,
+        omitBrokenSymbolicLinks: true
+    };
+    if (copy) {
+        if (typeof copy.followSymbolicLinks === 'boolean') {
+            result.followSymbolicLinks = copy.followSymbolicLinks;
+            core.debug(`followSymbolicLinks '${result.followSymbolicLinks}'`);
+        }
+        if (typeof copy.implicitDescendants === 'boolean') {
+            result.implicitDescendants = copy.implicitDescendants;
+            core.debug(`implicitDescendants '${result.implicitDescendants}'`);
+        }
+        if (typeof copy.omitBrokenSymbolicLinks === 'boolean') {
+            result.omitBrokenSymbolicLinks = copy.omitBrokenSymbolicLinks;
+            core.debug(`omitBrokenSymbolicLinks '${result.omitBrokenSymbolicLinks}'`);
+        }
+    }
+    return result;
+}
+exports.getOptions = getOptions;
+//# sourceMappingURL=internal-glob-options-helper.js.map
+
+/***/ }),
+
+/***/ 621:
+/***/ (function(module) {
+
+"use strict";
+
+module.exports = balanced;
+function balanced(a, b, str) {
+  if (a instanceof RegExp) a = maybeMatch(a, str);
+  if (b instanceof RegExp) b = maybeMatch(b, str);
+
+  var r = range(a, b, str);
+
+  return r && {
+    start: r[0],
+    end: r[1],
+    pre: str.slice(0, r[0]),
+    body: str.slice(r[0] + a.length, r[1]),
+    post: str.slice(r[1] + b.length)
+  };
+}
+
+function maybeMatch(reg, str) {
+  var m = str.match(reg);
+  return m ? m[0] : null;
+}
+
+balanced.range = range;
+function range(a, b, str) {
+  var begs, beg, left, right, result;
+  var ai = str.indexOf(a);
+  var bi = str.indexOf(b, ai + 1);
+  var i = ai;
+
+  if (ai >= 0 && bi > 0) {
+    begs = [];
+    left = str.length;
+
+    while (i >= 0 && !result) {
+      if (i == ai) {
+        begs.push(i);
+        ai = str.indexOf(a, i + 1);
+      } else if (begs.length == 1) {
+        result = [ begs.pop(), bi ];
+      } else {
+        beg = begs.pop();
+        if (beg < left) {
+          left = beg;
+          right = bi;
+        }
+
+        bi = str.indexOf(b, i + 1);
+      }
+
+      i = ai < bi && ai >= 0 ? ai : bi;
+    }
+
+    if (begs.length) {
+      result = [ left, right ];
+    }
+  }
+
+  return result;
+}
+
+
+/***/ }),
+
+/***/ 622:
+/***/ (function(module) {
+
+module.exports = require("path");
+
+/***/ }),
+
+/***/ 728:
+/***/ (function(__unusedmodule, exports) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+class SearchState {
+    constructor(path, level) {
+        this.path = path;
+        this.level = level;
+    }
+}
+exports.SearchState = SearchState;
+//# sourceMappingURL=internal-search-state.js.map
+
+/***/ }),
+
+/***/ 747:
+/***/ (function(module) {
+
+module.exports = require("fs");
+
+/***/ }),
+
+/***/ 896:
+/***/ (function(module) {
+
+module.exports = function (xs, fn) {
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        var x = fn(xs[i], i);
+        if (isArray(x)) res.push.apply(res, x);
+        else res.push(x);
+    }
+    return res;
+};
+
+var isArray = Array.isArray || function (xs) {
+    return Object.prototype.toString.call(xs) === '[object Array]';
+};
+
+
+/***/ }),
+
+/***/ 923:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const assert = __webpack_require__(357);
+const os = __webpack_require__(87);
+const path = __webpack_require__(622);
+const pathHelper = __webpack_require__(972);
+const minimatch_1 = __webpack_require__(93);
+const internal_match_kind_1 = __webpack_require__(327);
+const internal_path_1 = __webpack_require__(383);
+const IS_WINDOWS = process.platform === 'win32';
+class Pattern {
+    constructor(patternOrNegate, segments) {
+        /**
+         * Indicates whether matches should be excluded from the result set
+         */
+        this.negate = false;
+        // Pattern overload
+        let pattern;
+        if (typeof patternOrNegate === 'string') {
+            pattern = patternOrNegate.trim();
+        }
+        // Segments overload
+        else {
+            // Convert to pattern
+            segments = segments || [];
+            assert(segments.length, `Parameter 'segments' must not empty`);
+            const root = Pattern.getLiteral(segments[0]);
+            assert(root && pathHelper.hasAbsoluteRoot(root), `Parameter 'segments' first element must be a root path`);
+            pattern = new internal_path_1.Path(segments).toString().trim();
+            if (patternOrNegate) {
+                pattern = `!${pattern}`;
+            }
+        }
+        // Negate
+        while (pattern.startsWith('!')) {
+            this.negate = !this.negate;
+            pattern = pattern.substr(1).trim();
+        }
+        // Normalize slashes and ensures absolute root
+        pattern = Pattern.fixupPattern(pattern);
+        // Segments
+        this.segments = new internal_path_1.Path(pattern).segments;
+        // Trailing slash indicates the pattern should only match directories, not regular files
+        this.trailingSeparator = pathHelper
+            .normalizeSeparators(pattern)
+            .endsWith(path.sep);
+        pattern = pathHelper.safeTrimTrailingSeparator(pattern);
+        // Search path (literal path prior to the first glob segment)
+        let foundGlob = false;
+        const searchSegments = this.segments
+            .map(x => Pattern.getLiteral(x))
+            .filter(x => !foundGlob && !(foundGlob = x === ''));
+        this.searchPath = new internal_path_1.Path(searchSegments).toString();
+        // Root RegExp (required when determining partial match)
+        this.rootRegExp = new RegExp(Pattern.regExpEscape(searchSegments[0]), IS_WINDOWS ? 'i' : '');
+        // Create minimatch
+        const minimatchOptions = {
+            dot: true,
+            nobrace: true,
+            nocase: IS_WINDOWS,
+            nocomment: true,
+            noext: true,
+            nonegate: true
+        };
+        pattern = IS_WINDOWS ? pattern.replace(/\\/g, '/') : pattern;
+        this.minimatch = new minimatch_1.Minimatch(pattern, minimatchOptions);
+    }
+    /**
+     * Matches the pattern against the specified path
+     */
+    match(itemPath) {
+        // Last segment is globstar?
+        if (this.segments[this.segments.length - 1] === '**') {
+            // Normalize slashes
+            itemPath = pathHelper.normalizeSeparators(itemPath);
+            // Append a trailing slash. Otherwise Minimatch will not match the directory immediately
+            // preceeding the globstar. For example, given the pattern `/foo/**`, Minimatch returns
+            // false for `/foo` but returns true for `/foo/`. Append a trailing slash to handle that quirk.
+            if (!itemPath.endsWith(path.sep)) {
+                // Note, this is safe because the constructor ensures the pattern has an absolute root.
+                // For example, formats like C: and C:foo on Windows are resolved to an aboslute root.
+                itemPath = `${itemPath}${path.sep}`;
+            }
+        }
+        else {
+            // Normalize slashes and trim unnecessary trailing slash
+            itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
+        }
+        // Match
+        if (this.minimatch.match(itemPath)) {
+            return this.trailingSeparator ? internal_match_kind_1.MatchKind.Directory : internal_match_kind_1.MatchKind.All;
+        }
+        return internal_match_kind_1.MatchKind.None;
+    }
+    /**
+     * Indicates whether the pattern may match descendants of the specified path
+     */
+    partialMatch(itemPath) {
+        // Normalize slashes and trim unnecessary trailing slash
+        itemPath = pathHelper.safeTrimTrailingSeparator(itemPath);
+        // matchOne does not handle root path correctly
+        if (pathHelper.dirname(itemPath) === itemPath) {
+            return this.rootRegExp.test(itemPath);
+        }
+        return this.minimatch.matchOne(itemPath.split(IS_WINDOWS ? /\\+/ : /\/+/), this.minimatch.set[0], true);
+    }
+    /**
+     * Escapes glob patterns within a path
+     */
+    static globEscape(s) {
+        return (IS_WINDOWS ? s : s.replace(/\\/g, '\\\\')) // escape '\' on Linux/macOS
+            .replace(/(\[)(?=[^/]+\])/g, '[[]') // escape '[' when ']' follows within the path segment
+            .replace(/\?/g, '[?]') // escape '?'
+            .replace(/\*/g, '[*]'); // escape '*'
+    }
+    /**
+     * Normalizes slashes and ensures absolute root
+     */
+    static fixupPattern(pattern) {
+        // Empty
+        assert(pattern, 'pattern cannot be empty');
+        // Must not contain `.` segment, unless first segment
+        // Must not contain `..` segment
+        const literalSegments = new internal_path_1.Path(pattern).segments.map(x => Pattern.getLiteral(x));
+        assert(literalSegments.every((x, i) => (x !== '.' || i === 0) && x !== '..'), `Invalid pattern '${pattern}'. Relative pathing '.' and '..' is not allowed.`);
+        // Must not contain globs in root, e.g. Windows UNC path \\foo\b*r
+        assert(!pathHelper.hasRoot(pattern) || literalSegments[0], `Invalid pattern '${pattern}'. Root segment must not contain globs.`);
+        // Normalize slashes
+        pattern = pathHelper.normalizeSeparators(pattern);
+        // Replace leading `.` segment
+        if (pattern === '.' || pattern.startsWith(`.${path.sep}`)) {
+            pattern = Pattern.globEscape(process.cwd()) + pattern.substr(1);
+        }
+        // Replace leading `~` segment
+        else if (pattern === '~' || pattern.startsWith(`~${path.sep}`)) {
+            const homedir = os.homedir();
+            assert(homedir, 'Unable to determine HOME directory');
+            assert(pathHelper.hasAbsoluteRoot(homedir), `Expected HOME directory to be a rooted path. Actual '${homedir}'`);
+            pattern = Pattern.globEscape(homedir) + pattern.substr(1);
+        }
+        // Replace relative drive root, e.g. pattern is C: or C:foo
+        else if (IS_WINDOWS &&
+            (pattern.match(/^[A-Z]:$/i) || pattern.match(/^[A-Z]:[^\\]/i))) {
+            let root = pathHelper.ensureAbsoluteRoot('C:\\dummy-root', pattern.substr(0, 2));
+            if (pattern.length > 2 && !root.endsWith('\\')) {
+                root += '\\';
+            }
+            pattern = Pattern.globEscape(root) + pattern.substr(2);
+        }
+        // Replace relative root, e.g. pattern is \ or \foo
+        else if (IS_WINDOWS && (pattern === '\\' || pattern.match(/^\\[^\\]/))) {
+            let root = pathHelper.ensureAbsoluteRoot('C:\\dummy-root', '\\');
+            if (!root.endsWith('\\')) {
+                root += '\\';
+            }
+            pattern = Pattern.globEscape(root) + pattern.substr(1);
+        }
+        // Otherwise ensure absolute root
+        else {
+            pattern = pathHelper.ensureAbsoluteRoot(Pattern.globEscape(process.cwd()), pattern);
+        }
+        return pathHelper.normalizeSeparators(pattern);
+    }
+    /**
+     * Attempts to unescape a pattern segment to create a literal path segment.
+     * Otherwise returns empty string.
+     */
+    static getLiteral(segment) {
+        let literal = '';
+        for (let i = 0; i < segment.length; i++) {
+            const c = segment[i];
+            // Escape
+            if (c === '\\' && !IS_WINDOWS && i + 1 < segment.length) {
+                literal += segment[++i];
+                continue;
+            }
+            // Wildcard
+            else if (c === '*' || c === '?') {
+                return '';
+            }
+            // Character set
+            else if (c === '[' && i + 1 < segment.length) {
+                let set = '';
+                let closed = -1;
+                for (let i2 = i + 1; i2 < segment.length; i2++) {
+                    const c2 = segment[i2];
+                    // Escape
+                    if (c2 === '\\' && !IS_WINDOWS && i2 + 1 < segment.length) {
+                        set += segment[++i2];
+                        continue;
+                    }
+                    // Closed
+                    else if (c2 === ']') {
+                        closed = i2;
+                        break;
+                    }
+                    // Otherwise
+                    else {
+                        set += c2;
+                    }
+                }
+                // Closed?
+                if (closed >= 0) {
+                    // Cannot convert
+                    if (set.length > 1) {
+                        return '';
+                    }
+                    // Convert to literal
+                    if (set) {
+                        literal += set;
+                        i = closed;
+                        continue;
+                    }
+                }
+                // Otherwise fall thru
+            }
+            // Append
+            literal += c;
+        }
+        return literal;
+    }
+    /**
+     * Escapes regexp special characters
+     * https://javascript.info/regexp-escaping
+     */
+    static regExpEscape(s) {
+        return s.replace(/[[\\^$.|?*+()]/g, '\\$&');
+    }
+}
+exports.Pattern = Pattern;
+//# sourceMappingURL=internal-pattern.js.map
+
+/***/ }),
+
+/***/ 972:
+/***/ (function(__unusedmodule, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const assert = __webpack_require__(357);
+const path = __webpack_require__(622);
+const IS_WINDOWS = process.platform === 'win32';
+/**
+ * Similar to path.dirname except normalizes the path separators and slightly better handling for Windows UNC paths.
+ *
+ * For example, on Linux/macOS:
+ * - `/               => /`
+ * - `/hello          => /`
+ *
+ * For example, on Windows:
+ * - `C:\             => C:\`
+ * - `C:\hello        => C:\`
+ * - `C:              => C:`
+ * - `C:hello         => C:`
+ * - `\               => \`
+ * - `\hello          => \`
+ * - `\\hello         => \\hello`
+ * - `\\hello\world   => \\hello\world`
+ */
+function dirname(p) {
+    // Normalize slashes and trim unnecessary trailing slash
+    p = safeTrimTrailingSeparator(p);
+    // Windows UNC root, e.g. \\hello or \\hello\world
+    if (IS_WINDOWS && /^\\\\[^\\]+(\\[^\\]+)?$/.test(p)) {
+        return p;
+    }
+    // Get dirname
+    let result = path.dirname(p);
+    // Trim trailing slash for Windows UNC root, e.g. \\hello\world\
+    if (IS_WINDOWS && /^\\\\[^\\]+\\[^\\]+\\$/.test(result)) {
+        result = safeTrimTrailingSeparator(result);
+    }
+    return result;
+}
+exports.dirname = dirname;
+/**
+ * Roots the path if not already rooted. On Windows, relative roots like `\`
+ * or `C:` are expanded based on the current working directory.
+ */
+function ensureAbsoluteRoot(root, itemPath) {
+    assert(root, `ensureAbsoluteRoot parameter 'root' must not be empty`);
+    assert(itemPath, `ensureAbsoluteRoot parameter 'itemPath' must not be empty`);
+    // Already rooted
+    if (hasAbsoluteRoot(itemPath)) {
+        return itemPath;
+    }
+    // Windows
+    if (IS_WINDOWS) {
+        // Check for itemPath like C: or C:foo
+        if (itemPath.match(/^[A-Z]:[^\\/]|^[A-Z]:$/i)) {
+            let cwd = process.cwd();
+            assert(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
+            // Drive letter matches cwd? Expand to cwd
+            if (itemPath[0].toUpperCase() === cwd[0].toUpperCase()) {
+                // Drive only, e.g. C:
+                if (itemPath.length === 2) {
+                    // Preserve specified drive letter case (upper or lower)
+                    return `${itemPath[0]}:\\${cwd.substr(3)}`;
+                }
+                // Drive + path, e.g. C:foo
+                else {
+                    if (!cwd.endsWith('\\')) {
+                        cwd += '\\';
+                    }
+                    // Preserve specified drive letter case (upper or lower)
+                    return `${itemPath[0]}:\\${cwd.substr(3)}${itemPath.substr(2)}`;
+                }
+            }
+            // Different drive
+            else {
+                return `${itemPath[0]}:\\${itemPath.substr(2)}`;
+            }
+        }
+        // Check for itemPath like \ or \foo
+        else if (normalizeSeparators(itemPath).match(/^\\$|^\\[^\\]/)) {
+            const cwd = process.cwd();
+            assert(cwd.match(/^[A-Z]:\\/i), `Expected current directory to start with an absolute drive root. Actual '${cwd}'`);
+            return `${cwd[0]}:\\${itemPath.substr(1)}`;
+        }
+    }
+    assert(hasAbsoluteRoot(root), `ensureAbsoluteRoot parameter 'root' must have an absolute root`);
+    // Otherwise ensure root ends with a separator
+    if (root.endsWith('/') || (IS_WINDOWS && root.endsWith('\\'))) {
+        // Intentionally empty
+    }
+    else {
+        // Append separator
+        root += path.sep;
+    }
+    return root + itemPath;
+}
+exports.ensureAbsoluteRoot = ensureAbsoluteRoot;
+/**
+ * On Linux/macOS, true if path starts with `/`. On Windows, true for paths like:
+ * `\\hello\share` and `C:\hello` (and using alternate separator).
+ */
+function hasAbsoluteRoot(itemPath) {
+    assert(itemPath, `hasAbsoluteRoot parameter 'itemPath' must not be empty`);
+    // Normalize separators
+    itemPath = normalizeSeparators(itemPath);
+    // Windows
+    if (IS_WINDOWS) {
+        // E.g. \\hello\share or C:\hello
+        return itemPath.startsWith('\\\\') || /^[A-Z]:\\/i.test(itemPath);
+    }
+    // E.g. /hello
+    return itemPath.startsWith('/');
+}
+exports.hasAbsoluteRoot = hasAbsoluteRoot;
+/**
+ * On Linux/macOS, true if path starts with `/`. On Windows, true for paths like:
+ * `\`, `\hello`, `\\hello\share`, `C:`, and `C:\hello` (and using alternate separator).
+ */
+function hasRoot(itemPath) {
+    assert(itemPath, `isRooted parameter 'itemPath' must not be empty`);
+    // Normalize separators
+    itemPath = normalizeSeparators(itemPath);
+    // Windows
+    if (IS_WINDOWS) {
+        // E.g. \ or \hello or \\hello
+        // E.g. C: or C:\hello
+        return itemPath.startsWith('\\') || /^[A-Z]:/i.test(itemPath);
+    }
+    // E.g. /hello
+    return itemPath.startsWith('/');
+}
+exports.hasRoot = hasRoot;
+/**
+ * Removes redundant slashes and converts `/` to `\` on Windows
+ */
+function normalizeSeparators(p) {
+    p = p || '';
+    // Windows
+    if (IS_WINDOWS) {
+        // Convert slashes on Windows
+        p = p.replace(/\//g, '\\');
+        // Remove redundant slashes
+        const isUnc = /^\\\\+[^\\]/.test(p); // e.g. \\hello
+        return (isUnc ? '\\' : '') + p.replace(/\\\\+/g, '\\'); // preserve leading \\ for UNC
+    }
+    // Remove redundant slashes
+    return p.replace(/\/\/+/g, '/');
+}
+exports.normalizeSeparators = normalizeSeparators;
+/**
+ * Normalizes the path separators and trims the trailing separator (when safe).
+ * For example, `/foo/ => /foo` but `/ => /`
+ */
+function safeTrimTrailingSeparator(p) {
+    // Short-circuit if empty
+    if (!p) {
+        return '';
+    }
+    // Normalize separators
+    p = normalizeSeparators(p);
+    // No trailing slash
+    if (!p.endsWith(path.sep)) {
+        return p;
+    }
+    // Check '/' on Linux/macOS and '\' on Windows
+    if (p === path.sep) {
+        return p;
+    }
+    // On Windows check if drive root. E.g. C:\
+    if (IS_WINDOWS && /^[A-Z]:\\$/i.test(p)) {
+        return p;
+    }
+    // Otherwise trim trailing slash
+    return p.substr(0, p.length - 1);
+}
+exports.safeTrimTrailingSeparator = safeTrimTrailingSeparator;
+//# sourceMappingURL=internal-path-helper.js.map
 
 /***/ })
 

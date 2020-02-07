@@ -10,7 +10,11 @@
     "package": "^1.0.1",
     "sha256-file": "^1.0.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@zeit/ncc": "^0.20.5",
+    "eslint": "^6.3.0",
+    "jest": "^24.9.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "package": "ncc build index.js -o dist"
