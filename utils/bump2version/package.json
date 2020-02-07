@@ -6,16 +6,11 @@
         "@actions/github": "^1.1.0"
     },
     "devDependencies": {
-        "webpack": "^4.41.2",
-        "webpack-cli": "^3.3.10"
+        "@zeit/ncc": "^0.20.5",
+        "eslint": "^6.3.0",
+        "jest": "^24.9.0"
     },
-    "eslintConfig": {
-        "extends": "eslint:recommended",
-        "parserOptions": {
-            "ecmaVersion": 2017
-        },
-        "env": {
-            "node": true
-        }
+    "scripts": {
+        "package": "ncc build index.js -o dist"
     }
 }
