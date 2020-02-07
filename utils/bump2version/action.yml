@@ -1,5 +1,13 @@
 name: pre-commit
 description: run pre-commit and optionally commit back to the pull request
+inputs:
+  currentVersion:
+    description: path for packaged helm chart
+    required: true
+  part:
+    description: Update Version
+    default: "minior"
+    required: false
 runs:
   using: 'node12'
   main: 'dist/index.js'
