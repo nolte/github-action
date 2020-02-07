@@ -1,5 +1,7 @@
 const core = require('@actions/core');
 const glob = require('@actions/glob');
+const path = require("path");
+
 var sha256File = require('sha256-file');
 currentPath = process.env['GITHUB_WORKSPACE']
 const patterns = [currentPath + '/dist/**.tgz']
