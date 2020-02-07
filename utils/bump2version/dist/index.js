@@ -1386,7 +1386,7 @@ async function main() {
     const ARGS = [
         '--current-version', currentVersion, part
     ];
-    const ret = await exec.exec('bump2version', ARGS, { ignoreReturnCode: push });
+    const ret = await exec.exec('bump2version', ARGS);
 }
 main().catch((e) => core.setFailed(e.message));
 
