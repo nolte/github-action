@@ -25135,7 +25135,7 @@ fs.readdir(currentPath, function (err, files) {
     //listing all files using forEach
     files.forEach(function (file) {
         // Do whatever you want to do with the file
-        hash = sha256File(file);
+        hash = sha256File(currentPath + "/" + file);
         console.log(hash);
 
     });
