@@ -994,8 +994,9 @@ async function run() {
     const files = await globber.glob()
     files.forEach(function (file) {
         hash = sha256File(file);
-        console.log(hash + " " + file);
-        core.setOutput('sha.' + file, hash);
+        currentFileName = path.basename(file);
+        console.log(hash + " " + currentFileName);
+        core.setOutput('sha.' + currentFileName, hash);
     });
     console.log("end ");
 }
