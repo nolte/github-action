@@ -15,9 +15,8 @@ async function run() {
         currentFileName = path.basename(file);
         console.log(hash + " " + currentFileName);
         core.setOutput('sha.' + currentFileName, hash);
+        write.sync(currentPath + '/dist/sha256.txt', hash + " " + currentFileName, { newline: true });
     });
-    write.sync(currentPath + '/dist/sha256.txt', 'some data...', { newline: true });
-
     console.log("end ");
 }
 run()
