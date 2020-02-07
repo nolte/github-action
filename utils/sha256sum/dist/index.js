@@ -25120,14 +25120,28 @@ function parseOptions(options, log, hook) {
 
 const core = __webpack_require__(576);
 const github = __webpack_require__(315);
-const { readdirSync } = __webpack_require__(747)
+const path = __webpack_require__(622);
+const fs = __webpack_require__(747);
 var sha256File = __webpack_require__(921);
 
+currentPath = process.env['GITHUB_WORKSPACE']
 
+//passsing directoryPath and callback function
+fs.readdir(currentPath, function (err, files) {
+    //handling error
+    if (err) {
+        return console.log('Unable to scan directory: ' + err);
+    }
+    //listing all files using forEach
+    files.forEach(function (file) {
+        // Do whatever you want to do with the file
+        console.log(file);
+    });
+});
 
 try {
     // `who-to-greet` input defined in action metadata file
-    currentPath = process.env['GITHUB_WORKSPACE']
+
     console.log(`The event payload: ${currentPath}`);
 } catch (error) {
     core.setFailed(error.message);
