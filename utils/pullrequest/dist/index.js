@@ -533,6 +533,7 @@ async function run() {
         core.setOutput('pull_request_html_url', r['data']['html_url']);
 
         milestoneNumber = core.getInput('mileStoneNumber', { required: false });
+        console.log("Add %s to pull request %s", milestoneNumber, r['data']['number']);
         if (milestoneNumber != "") {
             console.log("Add %s to pull request %s", milestoneNumber, r['data']['number']);
             const issue = octokit.issues.update({
