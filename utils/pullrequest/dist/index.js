@@ -547,11 +547,12 @@ async function run() {
         // add label to pull request
         const labels = core.getInput('labels', { required: false });
         if (labels != "") {
+            var labelArray = labels.split(",")
             octokit.issues.addLabels({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
                 issue_number: `${r['data']['number']}`,
-                labels
+                labelArray
             })
         }
 
