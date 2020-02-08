@@ -1,0 +1,19 @@
+---
+name: ff merge
+description: fast forward merge
+author: nolte
+inputs:
+  baseBranch:
+    description: path for packaged helm chart
+    default: "master"
+    required: false
+  headBranch:
+    description: path for packaged helm chart
+    default: "develop"
+    required: false
+runs:
+  using: docker
+  image: Dockerfile
+branding:
+  icon: alert-circle
+  color: blue
