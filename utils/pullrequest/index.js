@@ -56,7 +56,7 @@ async function run() {
         }
         // add label to pull request
         const labels = core.getInput('labels', { required: false });
-        if (labels != undefined) {
+        if (labels != "") {
             octokit.issues.addLabels({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
