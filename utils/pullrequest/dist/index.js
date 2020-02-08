@@ -533,7 +533,6 @@ async function run() {
         core.setOutput('pullRequestHtmlUrl', `${r['data']['html_url']}`);
         console.log("get");
         const milestoneNumber = core.getInput('mileStoneNumber', { required: false });
-        console.log("start");
         if (milestoneNumber != undefined) {
             console.log("add milestoneNumber");
             const issue = octokit.issues.update({
@@ -545,6 +544,17 @@ async function run() {
         } else {
             console.log("No milestone given");
         }
+        // add label to pull request
+        const labels = core.getInput('labels', { required: false });
+        if (labels != undefined) {
+            octokit.issues.addLabels({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                issue_number: `${r['data']['number']}`,
+                labels
+            })
+        }
+
 
         return r;
     });

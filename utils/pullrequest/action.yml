@@ -23,6 +23,9 @@ inputs:
   mileStoneNumber:
     description: 'Added Milestone to created pull request'
     required: false
+  labels:
+    description: 'Comma Sepereted list with labels'
+    required: false
 outputs:
   pullRequestNumber:
     description: 'Pull Request Number'
