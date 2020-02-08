@@ -490,16 +490,25 @@ module.exports = require("os");
 
 const github = __webpack_require__(469);
 const core = __webpack_require__(470);
+const process = __webpack_require__(765);
 
 
 async function run() {
     console.log("Create Pull Request")
-    const repo = core.getInput('repo', { required: true });
-    console.log("create/update Pull Request for repo %s", repo)
+    const repo = core.getInput('repo', { required: false });
+    const owner = core.getInput('owner', { required: false });
+    if (repo == undefined)
+        repo = process.env.GITHUB_REPOSITORY.split('/')[1];
+
+    if (owner == undefined)
+        owner = process.env.GITHUB_REPOSITORY.split('/')[0];
+
+    console.log("create/update Pull Request for repo %s from owner %s", repo, owner)
     core.setOutput('shaFilePath', repo);
 }
 
 run();
+
 
 /***/ }),
 
@@ -8769,6 +8778,13 @@ function removeHook (state, name, method) {
   state.registry[name].splice(index, 1)
 }
 
+
+/***/ }),
+
+/***/ 765:
+/***/ (function(module) {
+
+module.exports = require("process");
 
 /***/ }),
 
