@@ -532,10 +532,10 @@ async function run() {
         core.setOutput('pull_request_number', r['data']['number']);
         core.setOutput('pull_request_html_url', r['data']['html_url']);
 
-        milestoneNumber = core.getInput('mileStoneNumber', { required: false });
-        console.log("Add %s to pull request %s", milestoneNumber, r['data']['number']);
-        if (milestoneNumber != "") {
-            console.log("Add %s to pull request %s", milestoneNumber, r['data']['number']);
+        const milestoneNumber = core.getInput('mileStoneNumber', { required: false });
+        console.log("Add %i to pull request %s", milestoneNumber, r['data']['number']);
+        if (milestoneNumber != undefined) {
+            console.log("Add %i to pull request %s", milestoneNumber, r['data']['number']);
             const issue = octokit.issues.update({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
