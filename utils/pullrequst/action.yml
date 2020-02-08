@@ -1,0 +1,10 @@
+name: pre-commit
+description: run pre-commit and optionally commit back to the pull request
+inputs:
+  repo:
+    description: Update Version
+    default: "${{ env.GITHUB_REPOSITORY }}"
+    required: false
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
