@@ -12,7 +12,7 @@ URI=https://api.github.com
 API_HEADER="Accept: application/vnd.github.v3+json"
 AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
 
-if [[ "$baseBranch" != "$headBranch" ]]; then
+if [[ "$INPUT_BASEBRANCH" != "$INPUT_HEADBRANCH" ]]; then
 	echo "PRs from forks are not supported at the moment."
 	exit 1
 fi
@@ -22,16 +22,16 @@ git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHU
 set -o xtrace
 
 # make sure branches are up-to-date
-git fetch origin $baseBranch
-git fetch origin $headBranch
+git fetch origin $INPUT_BASEBRANCH
+git fetch origin $INPUT_HEADBRANCH
 
 # merge
-git checkout -b $baseBranch origin/$headBranch
-git checkout -b $headBranch origin/$headBranch
+git checkout -b $INPUT_BASEBRANCH origin/$INPUT_BASEBRANCH
+git checkout -b $INPUT_HEADBRANCH origin/$INPUT_HEADBRANCH
 
-git checkout $headBranch
+git checkout $INPUT_HEADBRANCH
 
-git merge $baseBranch --ff --no-commit
+git merge $INPUT_BASEBRANCH --ff --no-commit
 
 
 git push --force-with-lease
