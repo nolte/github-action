@@ -20,7 +20,7 @@ inputs:
   body:
     description: 'Multi-line commit message describing changes'
     required: true
-  milestoneNumber:
+  mileStoneNumber:
     description: 'Added Milestone to created pull request'
     required: false
 outputs:
