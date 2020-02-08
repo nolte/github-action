@@ -503,14 +503,11 @@ async function run() {
     title = core.getInput('title', { required: true });
     body = core.getInput('body', { required: true });
 
-    const actor = process.env.GITHUB_REPOSITORY.split('/')[0];
-    const repo = process.env.GITHUB_REPOSITORY.split('/')[1];
-
     const response = octokit.pulls.create({
         'title': title,                 // Commit title, generally should be less than 74 characters
         'body': body,                   // Multi-line commit message
-        'owner': actor,                 // Username or Organization with permissions to initialize Pull Request
-        'repo': repo,                   // GitHub repository link or hash eg. `fancy-project`
+        'owner': github.context.repo.owner,                 // Username or Organization with permissions to initialize Pull Request
+        'repo': github.context.repo.repo,                   // GitHub repository link or hash eg. `fancy-project`
         'head': head,                   // Where changes are implemented, eg. `your-name:feature-branch`
         'base': base,                   // Branch name where changes should be incorporated, eg. `master`
         'maintainer_can_modify': true,  // Not about to assume that maintainers do not want the option to modify
@@ -533,6 +530,19 @@ async function run() {
 
         core.setOutput('pull_request_number', r['data']['number']);
         core.setOutput('pull_request_html_url', r['data']['html_url']);
+
+        milestoneNumber = core.getInput('mileStoneNumber', { required: false });
+        if (milestoneNumber != undefined) {
+            console.log("Add %s to pull request %s", milestoneNumber, r['data']['number']);
+            const issue = client.issues.update({
+                owner: github.context.repo.owner,
+                repo: github.context.repo.repo,
+                issue_number: r['data']['number'],
+                milestone: milestoneNumber,
+            });
+        } else {
+            console.log("No milestone given");
+        }
 
         return r;
     });
