@@ -529,8 +529,8 @@ async function run() {
         console.log(`Pull Request Number -> ${r['data']['number']}`);
         console.log(`Pull Request State -> ${r['data']['state']}`);
         console.log("before out");
-        core.setOutput('pullRequestNumber', r['data']['number']);
-        core.setOutput('pullRequestHtmlUrl', r['data']['html_url']);
+        core.setOutput('pullRequestNumber', "${r['data']['number']}");
+        core.setOutput('pullRequestHtmlUrl', "${r['data']['html_url']}");
         console.log("get");
         const milestoneNumber = core.getInput('mileStoneNumber', { required: false });
         console.log("start");
@@ -539,7 +539,7 @@ async function run() {
             const issue = octokit.issues.update({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
-                issue_number: r['data']['number'],
+                issue_number: "${r['data']['number']}",
                 milestone: milestoneNumber,
             });
         } else {
