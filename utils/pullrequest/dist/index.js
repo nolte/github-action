@@ -494,19 +494,50 @@ const process = __webpack_require__(765);
 
 
 async function run() {
+
+
     console.log("Create Pull Request")
-    repo = core.getInput('repo', { required: false });
-    owner = core.getInput('owner', { required: false });
-    console.log("Read Owner: '%s'", owner)
-    console.log("Current RepoEnv '%s'", process.env.GITHUB_REPOSITORY)
-    if (repo == undefined || repo == '')
-        repo = process.env.GITHUB_REPOSITORY.split('/')[1];
+    token = core.getInput('pull_request_token', { required: true });
+    head = core.getInput('head', { required: true });
+    base = core.getInput('base', { required: true });
+    title = core.getInput('title', { required: true });
+    body = core.getInput('body', { required: true });
 
-    if (owner == undefined || owner == '')
-        owner = process.env.GITHUB_REPOSITORY.split('/')[0];
+    const actor = process.env.GITHUB_REPOSITORY.split('/')[0];
+    const repo = process.env.GITHUB_REPOSITORY.split('/')[1];
 
-    console.log("create/update Pull Request for repo %s from owner %s", repo, owner)
-    core.setOutput('shaFilePath', repo);
+    const response = octokit.pulls.create({
+        'title': title,                 // Commit title, generally should be less than 74 characters
+        'body': body,                   // Multi-line commit message
+        'owner': actor,                 // Username or Organization with permissions to initialize Pull Request
+        'repo': repo,                   // GitHub repository link or hash eg. `fancy-project`
+        'head': head,                   // Where changes are implemented, eg. `your-name:feature-branch`
+        'base': base,                   // Branch name where changes should be incorporated, eg. `master`
+        'maintainer_can_modify': true,  // Not about to assume that maintainers do not want the option to modify
+        'draft': false,                 // If `true` no notifications would be generated
+    }).catch((e) => {
+        const error_message = ['Failed to initialize Pull Request',
+            ...error_message__base,
+            ...gha_example,
+        ];
+        console.error(error_message.join('\n'));
+        throw e;
+    }).then(function (r) {
+        // console.log(JSON.stringify(r['headers']));
+        // console.log(JSON.stringify(r['data']));
+        console.log(`Rate Limit Remaining -> ${r['headers']['x-ratelimit-remaining']}`);
+        console.log(`Rate Limit Reset -> ${r['headers']['x-ratelimit-reset']}`);
+        console.log(`Pull Request HTML URL -> ${r['data']['html_url']}`);
+        console.log(`Pull Request Number -> ${r['data']['number']}`);
+        console.log(`Pull Request State -> ${r['data']['state']}`);
+
+        core.setOutput('pull_request_number', r['data']['number']);
+        core.setOutput('pull_request_html_url', r['data']['html_url']);
+
+        return r;
+    });
+
+    console.log("create/update Pull Request for repo")
 }
 
 run();

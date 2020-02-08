@@ -1,10 +1,31 @@
 name: pre-commit
 description: run pre-commit and optionally commit back to the pull request
 inputs:
-  repo:
-    description: Update Version
-    default: "${{ env.GITHUB_REPOSITORY }}"
-    required: false
+  pull_request_token:
+    description: 'Secret authentication token with permissions to initialize Pull Requests for repository'
+    required: true
+
+  head:
+    description: 'Where changes are implemented, eg. `your-name:feature-branch`'
+    required: true
+
+  base:
+    description: 'Branch name where changes should be incorporated, eg. `master`'
+    required: true
+
+  title:
+    description: 'Commit title, generally should be less than 74 characters'
+    required: true
+
+  body:
+    description: 'Multi-line commit message describing changes'
+    required: true
+
+outputs:
+  pull_request_number:
+    description: 'Pull Request Number'
+  pull_request_html_url:
+    description: 'Pull Request HTML Url'
 runs:
   using: 'node12'
   main: 'dist/index.js'
