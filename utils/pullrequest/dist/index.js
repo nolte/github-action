@@ -495,8 +495,8 @@ const process = __webpack_require__(765);
 
 async function run() {
     console.log("Create Pull Request")
-    const repo = core.getInput('repo', { required: false });
-    const owner = core.getInput('owner', { required: false });
+    repo = core.getInput('repo', { required: false });
+    owner = core.getInput('owner', { required: false });
     console.log("Read Owner: '%s'", owner)
     console.log("Current RepoEnv '%s'", process.env.GITHUB_REPOSITORY)
     if (repo == undefined || repo == '')
