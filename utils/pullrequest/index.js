@@ -64,7 +64,7 @@ async function run() {
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
                 issue_number: `${r['data']['number']}`,
-                labelArray
+                labels: labelArray
             })
         }
 
