@@ -24,9 +24,9 @@ inputs:
     description: 'Added Milestone to created pull request'
     required: false
 outputs:
-  pull_request_number:
+  pullRequestNumber:
     description: 'Pull Request Number'
-  pull_request_html_url:
+  pullRequestHtmlUrl:
     description: 'Pull Request HTML Url'
 runs:
   using: 'node12'

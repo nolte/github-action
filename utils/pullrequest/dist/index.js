@@ -529,8 +529,8 @@ async function run() {
         console.log(`Pull Request Number -> ${r['data']['number']}`);
         console.log(`Pull Request State -> ${r['data']['state']}`);
         console.log("before out");
-        core.setOutput('pull_request_number', r.data.number);
-        core.setOutput('pull_request_html_url', r.data.html_url);
+        core.setOutput('pullRequestNumber', r.data.number);
+        core.setOutput('pullRequestHtmlUrl', r.data.html_url);
         console.log("get");
         const milestoneNumber = core.getInput('mileStoneNumber', { required: false });
         console.log("start");
