@@ -550,6 +550,9 @@ async function run() {
             console.log("add labels %s", labels);
             labelArray = labels.split(",")
             console.log("add labelsArray %s", labelArray);
+            for (var i = 0; i < labelArray.length; i++) {
+                labelArray[i] = labelArray[i].trim()
+            }
             octokit.issues.addLabels({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
