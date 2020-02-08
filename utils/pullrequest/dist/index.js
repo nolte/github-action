@@ -492,16 +492,13 @@ const github = __webpack_require__(469);
 const core = __webpack_require__(470);
 const process = __webpack_require__(765);
 
+const token = core.getInput('pull_request_token', { required: true });
+const octokit = new github.GitHub(token);
 
 async function run() {
 
 
     console.log("Create Pull Request")
-    token = core.getInput('pull_request_token', { required: true });
-
-    const octokit = new github.GitHub(token);
-
-
     head = core.getInput('head', { required: true });
     base = core.getInput('base', { required: true });
     title = core.getInput('title', { required: true });
