@@ -58,7 +58,8 @@ async function run() {
         const labels = core.getInput('labels', { required: false });
         if (labels != "") {
             console.log("add labels %s", labels);
-            var labelArray = labels.split(",")
+            labelArray = labels.split(",")
+            console.log("add labelsArray %s", labelArray);
             octokit.issues.addLabels({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
