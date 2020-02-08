@@ -9,10 +9,10 @@ async function run() {
     const owner = core.getInput('owner', { required: false });
     console.log("Read Owner: '%s'", owner)
     console.log("Current RepoEnv '%s'", process.env.GITHUB_REPOSITORY)
-    if (repo == undefined)
+    if (repo == undefined || repo == '')
         repo = process.env.GITHUB_REPOSITORY.split('/')[1];
 
-    if (owner == undefined)
+    if (owner == undefined || owner == '')
         owner = process.env.GITHUB_REPOSITORY.split('/')[0];
 
     console.log("create/update Pull Request for repo %s from owner %s", repo, owner)
