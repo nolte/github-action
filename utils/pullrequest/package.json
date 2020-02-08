@@ -1,0 +1,13 @@
+{
+  "private": true,
+  "dependencies": {
+    "@actions/core": "^1.2.2",
+    "@actions/github": "^2.1.0"
+  },
+  "devDependencies": {
+    "@zeit/ncc": "^0.20.5"
+  },
+  "scripts": {
+    "package": "ncc build index.js -o dist"
+  }
+}
