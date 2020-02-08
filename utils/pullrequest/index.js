@@ -8,12 +8,16 @@ async function run() {
 
     console.log("Create Pull Request")
     token = core.getInput('pull_request_token', { required: true });
+
+    const octokit = new github.GitHub(token);
+
+
     head = core.getInput('head', { required: true });
     base = core.getInput('base', { required: true });
     title = core.getInput('title', { required: true });
     body = core.getInput('body', { required: true });
 
-    const response = github.pulls.create({
+    const response = octokit.pulls.create({
         'title': title,                 // Commit title, generally should be less than 74 characters
         'body': body,                   // Multi-line commit message
         'owner': github.context.repo.owner,                 // Username or Organization with permissions to initialize Pull Request
@@ -44,7 +48,7 @@ async function run() {
         milestoneNumber = core.getInput('mileStoneNumber', { required: false });
         if (milestoneNumber != undefined) {
             console.log("Add %s to pull request %s", milestoneNumber, r['data']['number']);
-            const issue = github.issues.update({
+            const issue = octokit.issues.update({
                 owner: github.context.repo.owner,
                 repo: github.context.repo.repo,
                 issue_number: r['data']['number'],
