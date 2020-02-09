@@ -10,7 +10,8 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
 fi
 
 set -o xtrace
-
+git config --global user.email "action@github.com"
+git config --global user.name "GitHub Action"
 
 git clone https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git /tmp/repo
 
