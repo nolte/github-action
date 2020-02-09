@@ -21,9 +21,8 @@ set -o xtrace
 git fetch origin master
 git fetch origin develop
 
-git checkout develop
+git checkout -b develop origin/develop
 
-git merge master --ff --no-commit
-
+git merge origin/master --ff --no-commit
 
 git push --force-with-lease
