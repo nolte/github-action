@@ -21,7 +21,12 @@ set -o xtrace
 git fetch origin master
 git fetch origin develop
 
+git checkout master origin/master
+git pull origin master
+
 git checkout -b develop origin/develop
+git pull origin develop
+
 
 git merge origin/master --ff --no-commit
 
