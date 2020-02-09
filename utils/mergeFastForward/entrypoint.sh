@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-echo "Fast Foward Merge at $GITHUB_REPOSITORY..."
+echo "2Fast Foward Merge at $GITHUB_REPOSITORY..."
 echo $INPUT_HEADBRANCH
 echo $INPUT_BASEBRANCH
 
