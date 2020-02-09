@@ -2,6 +2,7 @@ name: get-gh-release
 description: load github release information
 inputs:
   GITHUB_TOKEN:
+    description: Github Access Token
     required: true
   repo:
     description: path for packaged helm chart
