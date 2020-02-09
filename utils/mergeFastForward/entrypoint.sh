@@ -9,26 +9,22 @@ if [[ -z "$GITHUB_TOKEN" ]]; then
 	exit 1
 fi
 
-URI=https://api.github.com
-API_HEADER="Accept: application/vnd.github.v3+json"
-AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
-
-git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
-
 set -o xtrace
 
+
+git clone https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git /tmp/repo
+
+cd /tmp/repo
+
 # make sure branches are up-to-date
-git fetch origin master
-git fetch origin develop
+git checkout develop
+#git pull origin master --allow-unrelated-histories
+#
+#git checkout -b develop origin/develop
+#git pull origin develop --allow-unrelated-histories
+#
+#git rebase origin/master
 
-git checkout master
-git pull origin master --allow-unrelated-histories
+git merge master --ff --no-commit
 
-git checkout -b develop origin/develop
-git pull origin develop --allow-unrelated-histories
-
-git rebase origin/master
-
-#git merge origin/master --ff --no-commit --allow-unrelated-histories
-
-git push --force-with-lease
+git push origin develop
