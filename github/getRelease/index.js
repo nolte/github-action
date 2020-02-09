@@ -7,7 +7,7 @@ async function main() {
     console.log("Load Github Release informations")
     const subPath = core.getInput('repo', { required: true });
     const release_id = core.getInput('releaseId', { required: true });
-    const myToken = core.getInput('GITHUB_TOKEN');
+    const myToken = core.getInput('token');
 
     const octokit = new github.GitHub(myToken);
 

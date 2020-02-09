@@ -1,7 +1,7 @@
 name: get-gh-release
 description: load github release information
 inputs:
-  GITHUB_TOKEN:
+  token:
     description: Github Access Token
     required: true
   repo:
