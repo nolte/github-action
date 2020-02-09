@@ -28,5 +28,5 @@ git checkout develop
 #git rebase origin/master
 
 git merge origin/master --ff --no-commit
-
+git commit -m "reintegrate master"
 git push origin develop
