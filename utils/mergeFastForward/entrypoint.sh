@@ -18,16 +18,16 @@ git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHU
 set -o xtrace
 
 # make sure branches are up-to-date
-git fetch origin $INPUT_BASEBRANCH
-git fetch origin $INPUT_HEADBRANCH
+git fetch origin master
+git fetch origin develop
 
 # merge
-git checkout -b $INPUT_BASEBRANCH origin/$INPUT_BASEBRANCH
-git checkout -b $INPUT_HEADBRANCH origin/$INPUT_HEADBRANCH
+git checkout -b master origin/master
+git checkout -b develop origin/develop
 
-git checkout $INPUT_HEADBRANCH
+git checkout develop
 
-git merge $INPUT_BASEBRANCH --ff --no-commit
+git merge master --ff --no-commit
 
 
 git push --force-with-lease
