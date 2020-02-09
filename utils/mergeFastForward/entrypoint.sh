@@ -25,6 +25,6 @@ git checkout develop
 #
 #git rebase origin/master
 
-git merge master --ff --no-commit
+git merge origin/master --ff --no-commit
 
 git push origin develop
