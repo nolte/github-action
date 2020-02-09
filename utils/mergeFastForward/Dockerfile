@@ -11,4 +11,6 @@ WORKDIR /src
 
 COPY entrypoint.sh /entrypoint.sh
 
+RUN cat /entrypoint.sh
+
 ENTRYPOINT [ "/entrypoint.sh" ]
