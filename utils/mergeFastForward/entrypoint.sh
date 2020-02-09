@@ -28,6 +28,6 @@ git checkout -b develop origin/develop
 git pull origin develop
 
 
-git merge origin/master --ff --no-commit
+git merge origin/master --ff --no-commit --allow-unrelated-histories
 
 git push --force-with-lease
