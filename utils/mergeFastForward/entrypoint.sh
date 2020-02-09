@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 echo "Fast Foward Merge at $GITHUB_REPOSITORY..."
-
+echo $INPUT_HEADBRANCH
 
 if [[ -z "$GITHUB_TOKEN" ]]; then
 	echo "Set the GITHUB_TOKEN env variable."
