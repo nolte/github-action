@@ -22,10 +22,10 @@ git fetch origin master
 git fetch origin develop
 
 git checkout master
-git pull origin master
+git pull origin master --allow-unrelated-histories
 
 git checkout -b develop origin/develop
-git pull origin develop
+git pull origin develop --allow-unrelated-histories
 
 
 git merge origin/master --ff --no-commit --allow-unrelated-histories
