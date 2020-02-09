@@ -13,11 +13,6 @@ URI=https://api.github.com
 API_HEADER="Accept: application/vnd.github.v3+json"
 AUTH_HEADER="Authorization: token $GITHUB_TOKEN"
 
-if [[ "$INPUT_BASEBRANCH" != "$INPUT_HEADBRANCH" ]]; then
-	echo "PRs from forks are not supported at the moment."
-	exit 1
-fi
-
 git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY.git
 
 set -o xtrace
