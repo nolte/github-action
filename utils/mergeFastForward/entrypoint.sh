@@ -27,7 +27,7 @@ git pull origin master --allow-unrelated-histories
 git checkout -b develop origin/develop
 git pull origin develop --allow-unrelated-histories
 
-git rebase origin/develop
+git rebase origin/master
 
 #git merge origin/master --ff --no-commit --allow-unrelated-histories
 
