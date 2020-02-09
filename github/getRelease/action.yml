@@ -1,0 +1,12 @@
+name: get-gh-release
+description: load github release information
+inputs:
+  repo:
+    description: path for packaged helm chart
+    required: true
+  releaseid:
+    description: Update Version
+    required: true
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
