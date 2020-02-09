@@ -1,6 +1,8 @@
 name: get-gh-release
 description: load github release information
 inputs:
+  GITHUB_TOKEN:
+    required: true
   repo:
     description: path for packaged helm chart
     required: true

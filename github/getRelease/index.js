@@ -7,10 +7,13 @@ async function main() {
     console.log("Load Github Release informations")
     const subPath = core.getInput('repo', { required: true });
     const release_id = core.getInput('releaseId', { required: true });
+    const myToken = core.getInput('GITHUB_TOKEN');
+
+    const octokit = new github.GitHub(myToken);
 
     const owner = subPath.split("/")[0]
     const repo = subPath.split("/")[1]
-    github.repos.getRelease({
+    octokit.repos.getRelease({
         owner,
         repo,
         release_id
