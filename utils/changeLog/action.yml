@@ -7,12 +7,16 @@ runs:
   image: docker://docker.io/ferrarimarco/github-changelog-generator:1.15.0
   args:
     - "--token ${{ inputs.CHANGELOG_GITHUB_TOKEN }}"
+    - "--user ${{ inputs.CHANGELOG_GITHUB_USER }}"
     - "--project ${{ inputs.CHANGELOG_GITHUB_PROJECT }}"
     - "--since-tag ${{ inputs.CHANGELOG_GITHUB_SINCE_TAG }}"
     - "--no-unreleased"
 inputs:
   CHANGELOG_GITHUB_TOKEN:  # id of input
     description: 'Github Api Token'
+    required: true
+  CHANGELOG_GITHUB_USER:  # id of input
+    description: 'the Project name like github-changelog-generator/github-changelog-generator'
     required: true
   CHANGELOG_GITHUB_PROJECT:  # id of input
     description: 'the Project name like github-changelog-generator/github-changelog-generator'
