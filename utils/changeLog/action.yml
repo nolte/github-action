@@ -4,11 +4,12 @@ description: Validate markdown links with remarkjs/remark-validate-links
 author: nolte
 runs:
   using: docker
-  image: Dockerfile
+  image: docker://docker.io/github-changelog-generator:1.15.0
   args:
-    - ${{ inputs.CHANGELOG_GITHUB_TOKEN }}
-    - ${{ inputs.CHANGELOG_GITHUB_PROJECT }}
-    - ${{ inputs.CHANGELOG_GITHUB_SINCE_TAG }}
+    - "--token ${{ inputs.CHANGELOG_GITHUB_TOKEN }}"
+    - "--project ${{ inputs.CHANGELOG_GITHUB_PROJECT }}"
+    - "--since-tag ${{ inputs.CHANGELOG_GITHUB_SINCE_TAG }}"
+    - "--no-unreleased"
 inputs:
   CHANGELOG_GITHUB_TOKEN:  # id of input
     description: 'Github Api Token'
