@@ -6,7 +6,6 @@ runs:
   using: docker
   image: docker://docker.io/ferrarimarco/github-changelog-generator:1.15.0
   args:
-    - "--token ${{ inputs.CHANGELOG_GITHUB_TOKEN }}"
     - "--user ${{ inputs.CHANGELOG_GITHUB_USER }}"
     - "--project ${{ inputs.CHANGELOG_GITHUB_PROJECT }}"
     - "--since-tag ${{ inputs.CHANGELOG_GITHUB_SINCE_TAG }}"
