@@ -1,0 +1,25 @@
+---
+name: Markdown Links
+description: Validate markdown links with remarkjs/remark-validate-links
+author: nolte
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.CHANGELOG_GITHUB_TOKEN }}
+    - ${{ inputs.CHANGELOG_GITHUB_PROJECT }}
+    - ${{ inputs.CHANGELOG_GITHUB_SINCE_TAG }}
+inputs:
+  CHANGELOG_GITHUB_TOKEN:  # id of input
+    description: 'Github Api Token'
+    required: true
+  CHANGELOG_GITHUB_PROJECT:  # id of input
+    description: 'the Project name like github-changelog-generator/github-changelog-generator'
+    required: true
+  CHANGELOG_GITHUB_SINCE_TAG:  # id of input
+    description: 'Who to greet'
+    required: true
+
+branding:
+  icon: alert-circle
+  color: blue
