@@ -4,7 +4,7 @@ description: Validate markdown links with remarkjs/remark-validate-links
 author: nolte
 runs:
   using: docker
-  image: docker://docker.io/github-changelog-generator:1.15.0
+  image: docker://docker.io/ferrarimarco/github-changelog-generator:1.15.0
   args:
     - "--token ${{ inputs.CHANGELOG_GITHUB_TOKEN }}"
     - "--project ${{ inputs.CHANGELOG_GITHUB_PROJECT }}"
